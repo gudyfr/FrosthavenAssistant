@@ -428,10 +428,16 @@ class SettingsMenuState extends State<SettingsMenu> {
                                             getIt<Network>()
                                                 .server
                                                 .startServer();
+                                            getIt<Network>()
+                                                .webServer
+                                                .startServer();
                                           } else {
                                             //close server
                                             getIt<Network>()
                                                 .server
+                                                .stopServer(null);
+                                            getIt<Network>()
+                                                .webServer
                                                 .stopServer(null);
                                           }
                                         });

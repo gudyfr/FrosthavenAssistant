@@ -486,14 +486,13 @@ class GameMethods {
     }
 
     //add objectives and escorts
-    for (var item in specialRules) {
-      if (item.type == "Objective") {
-        if (item.condition == "" ||
-            StatCalculator.evaluateCondition(item.condition)) {
+    for(var item in specialRules) {
+      if(item.type == "Objective"){
+        if (item.condition == ""  || StatCalculator.evaluateCondition(item.condition)) {
           Character objective = GameMethods.createCharacter(
               "Objective", item.name, _gameState.level.value + 1)!;
           objective.characterState.maxHealth.value =
-              StatCalculator.calculateFormula(item.health.toString())!;
+          StatCalculator.calculateFormula(item.health.toString())!;
           objective.characterState.health.value =
               objective.characterState.maxHealth.value;
           objective.characterState.initiative.value = item.init;
