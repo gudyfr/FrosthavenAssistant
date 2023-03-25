@@ -47,6 +47,7 @@ class WebServer {
       ..post('/switchMonster', _switchMonsterTypeHandler)
       ..post('/setScenario', _setScenarioHandler)
       ..post('/applyCondition', _applyConditionHandler)
+      ..post('/changeHealth', _applyHealthChangeHandler)
       ..post('/change', _applyChangeHandler)
       ..post('/setElement', _applySetElementHandler)
       ..post('/loot', _lootHandler);
