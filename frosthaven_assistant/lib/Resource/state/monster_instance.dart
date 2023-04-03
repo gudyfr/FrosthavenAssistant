@@ -1,4 +1,6 @@
 
+import 'package:frosthaven_assistant/Model/monster.dart';
+
 import '../../services/service_locator.dart';
 import '../enums.dart';
 import '../stat_calculator.dart';
@@ -7,7 +9,7 @@ import 'figure_state.dart';
 import 'game_state.dart';
 import 'monster.dart';
 
-class MonsterInstance extends FigureState{
+class MonsterInstance extends FigureState {
   MonsterInstance(this.standeeNr, this.type, bool summoned, Monster monster) {
     setLevel(monster);
     gfx = monster.type.gfx;
@@ -45,12 +47,28 @@ class MonsterInstance extends FigureState{
 
   void setLevel(Monster monster) {
     dynamic newHealthValue = 10; //need to put something outer than 0 or the standee will die immediately causing glitch
-    if (type == MonsterType.boss) {
-      newHealthValue = monster.type.levels[monster.level.value].boss!.health;
-    } else if (type == MonsterType.elite) {
-      newHealthValue= monster.type.levels[monster.level.value].elite!.health;
-    } else if (type == MonsterType.normal) {
-      newHealthValue = monster.type.levels[monster.level.value].normal!.health;
+    MonsterStatsModel? monsterStatsModel;
+    switch(type) {
+      case MonsterType.boss :
+        monsterStatsModel = monster.type.levels[monster.level.value].boss!;
+        break;
+      case MonsterType.elite :
+        monsterStatsModel = monster.type.levels[monster.level.value].elite!;
+        break;
+      case  MonsterType.normal :
+        monsterStatsModel = monster.type.levels[monster.level.value].normal!;
+        break;
+    }
+    if(monsterStatsModel != null) {
+      newHealthValue = monsterStatsModel.health;
+      for (var attribute in monsterStatsModel.attributes) {
+        if (attribute.startsWith("%shield% ")) {
+          baseShield.value = int.parse(attribute.substring("%shield% ".length));
+        } else if (attribute.startsWith("%retaliate% ")) {
+          baseRetaliate.value =
+              int.parse(attribute.substring("%retaliate% ".length));
+        }
+      }
     }
     int? value = StatCalculator.calculateFormula(newHealthValue);
     if (value != null) {
@@ -89,6 +107,8 @@ class MonsterInstance extends FigureState{
     return '{'
         '"health": ${health.value}, '
         '"maxHealth": ${maxHealth.value}, '
+        '"shield": ${baseShield.value + turnShield.value}, '
+        '"retaliate": ${baseRetaliate.value + turnRetaliate.value}, '
         '"level": ${level.value}, '
         '"standeeNr": $standeeNr, '
         '"move": $move, '
