@@ -107,8 +107,8 @@ class MonsterInstance extends FigureState {
     return '{'
         '"health": ${health.value}, '
         '"maxHealth": ${maxHealth.value}, '
-        '"shield": ${baseShield.value + turnShield.value}, '
-        '"retaliate": ${baseRetaliate.value + turnRetaliate.value}, '
+        '"baseShield": ${baseShield.value}, '
+        '"baseRetaliate": ${baseRetaliate.value}, '
         '"level": ${level.value}, '
         '"standeeNr": $standeeNr, '
         '"move": $move, '
@@ -136,6 +136,8 @@ class MonsterInstance extends FigureState {
     move = json["move"];
     attack = json["attack"];
     range = json["range"];
+    baseShield.value = json["baseShield"] ?? 0;
+    baseRetaliate.value = json["baseRetaliate"] ?? 0;
     if(json.containsKey("roundSummoned")) {
       roundSummoned = json["roundSummoned"];
     } else {
