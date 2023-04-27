@@ -106,6 +106,7 @@ dependencies:
   format: ^1.2.0
   encrypt: ^5.0.1
   process_run: ^0.13.0
+  path_provider: ^2.0.14
 
 
 
