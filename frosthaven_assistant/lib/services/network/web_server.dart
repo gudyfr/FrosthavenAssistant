@@ -41,11 +41,14 @@ class WebServer {
   Future<void> startServer() async {
     final _router = shelf_router.Router()
       ..get('/state', _getStateHandler)
+      ..get('/file/<folder>/<file>', _getFileHandler)
+      ..get('/out/<file>', _getOutFileHandler)
       ..post('/startRound', _startRoundHandler)
       ..post('/endRound', _endRoundHandler)
       ..post('/addMonster', _addMonsterHandler)
       ..post('/switchMonster', _switchMonsterTypeHandler)
       ..post('/setScenario', _setScenarioHandler)
+      ..post('/setSection', _setSectionHandler)
       ..post('/applyCondition', _applyConditionHandler)
       ..post('/changeHealth', _applyHealthChangeHandler)
       ..post('/change', _applyChangeHandler)
@@ -70,6 +73,15 @@ class WebServer {
   }
 
   // Router instance to handler requests.
+  Response _getOutFileHandler(Request request, String file) {
+    File f = File("D:/Frosthaven-TTS-assets/parser/out/${Uri.decodeFull(file)}");
+    return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "application/json"});
+  }
+  Response _getFileHandler(Request request, String folder, String file) {
+      File f = File("D:/fh-audio/output/${Uri.decodeFull(folder)}/${Uri.decodeFull(file)}");
+      return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "audio/mp3"});
+  }
+
 
   Response _getStateHandler(Request request) {
     Map<String, int> elements = {};
@@ -99,6 +111,30 @@ class WebServer {
     var hash = state.hashCode;
     return Response.ok(state,
         headers: {"hash": "$hash", "Content-Type": "application/json"});
+  }
+
+  Future<Response> _setSectionHandler(Request request) async {
+    var data = Uri.decodeFull(await request.readAsString());
+    Map<String, dynamic> info = jsonDecode(data);
+    var section = info["section"];
+    var scenario = _gameState.scenario.value;
+    var regexp = RegExp(r'#([^\s]+)\s(.*)');
+    RegExpMatch? match = regexp.firstMatch(scenario);
+    if(match != null) {
+      var number = match[1];
+      var name = match[2];
+      var key = "#$section $name ($number)";
+      print("Adding section $key");
+      try {
+        _gameState.action(SetScenarioCommand(key, true));
+      } catch(e) {
+        return Response.notFound("Section not found in scenario");
+      }
+      return Response.ok("");
+    } else {
+      return Response.notFound("");
+    }
+    
   }
 
   Future<Response> _setScenarioHandler(Request request) async {
