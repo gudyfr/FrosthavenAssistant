@@ -433,12 +433,13 @@ class GameMethods {
 
     String initMessage = "";
     if (section) {
-      var sectionData = _gameState
+      var sections =  _gameState
           .modelData
           .value[_gameState.currentCampaign.value]
           ?.scenarios[_gameState.scenario.value]
-          ?.sections
-          .firstWhere((element) => element.name == scenario);
+          ?.sections;
+
+      var sectionData = sections?.firstWhereOrNull((element) => element.name == scenario);
       if (sectionData != null) {
         monsters = sectionData.monsters;
         specialRules = sectionData.specialRules.toList();
