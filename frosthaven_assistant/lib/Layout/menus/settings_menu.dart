@@ -32,6 +32,9 @@ class SettingsMenuState extends State<SettingsMenu> {
 
   final TextEditingController _serverTextController = TextEditingController();
   final TextEditingController _portTextController = TextEditingController();
+
+  final TextEditingController _webPortTextController = TextEditingController();
+  final TextEditingController _webFolderTextController = TextEditingController();
   final TextEditingController _fortellerEmailTextController =
       TextEditingController();
   final TextEditingController _fortellerPasswordTextController =
@@ -50,6 +53,12 @@ class SettingsMenuState extends State<SettingsMenu> {
     double maxBarScale = screenWidth / referenceMinBarWidth;
     _serverTextController.text = settings.lastKnownConnection;
     _portTextController.text = settings.lastKnownPort;
+    _webPortTextController.text = settings.lastKnownWebPort;
+    _fortellerEmailTextController.text = settings.lastKnownFortellerEmail;
+    _fortellerPasswordTextController.text = settings.lastKnownFortellerPassword;
+    _webFolderTextController.text = settings.webFolder.value;
+    _webFolderTextController.addListener(() {settings.webFolder.value = _webFolderTextController.text;});
+
 
     return Card(
         child: Scrollbar(
@@ -420,7 +429,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                 ),
                               ),
                               ValueListenableBuilder<bool>(
-                                  valueListenable: settings.forteller,
+                                  valueListenable: settings.server,
                                   builder: (context, value, child) {
                                     return CheckboxListTile(
                                         title: Text(settings.server.value
@@ -437,17 +446,24 @@ class SettingsMenuState extends State<SettingsMenu> {
                                             getIt<Network>()
                                                 .server
                                                 .startServer();
-                                            getIt<Network>()
-                                                .webServer
-                                                .startServer();
+                                            if(settings.enableWebServer.value) {
+                                              // Also start the web server
+                                              settings.lastKnownWebPort = _webPortTextController.text;
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .startServer();
+                                            }
                                           } else {
                                             //close server
                                             getIt<Network>()
                                                 .server
                                                 .stopServer(null);
-                                            getIt<Network>()
-                                                .webServer
-                                                .stopServer(null);
+                                            if(settings.enableWebServer.value) {
+                                              // Also stop the web server
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .stopServer(null);
+                                            }
                                           }
                                         });
                                   }),
@@ -490,6 +506,60 @@ class SettingsMenuState extends State<SettingsMenu> {
                                 ),
                               ),
                               ValueListenableBuilder<bool>(
+                                  valueListenable: settings.enableWebServer,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text("Also Enable Web Server"),
+                                        value: settings.enableWebServer.value,
+                                        onChanged: (bool? value) {
+                                          settings.enableWebServer.value = ! settings.enableWebServer.value;
+                                          settings.saveToDisk();
+                                          if (settings.enableWebServer.value) {
+                                            // If the server is running, then we should start the web server
+                                            if (settings.server.value) {
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .startServer();
+                                            }
+                                          } else {
+                                            // If the server is running, then we should stop the web server
+                                            if (settings.server.value) {
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .stopServer(null);
+                                            }
+                                          }
+                                        });
+                                  }),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 200,
+                                height: 40,
+                                child: TextField(
+                                  controller: _webPortTextController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "port",
+                                  ),
+                                  maxLength: 6,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 200,
+                                height: 40,
+                                child: TextField(
+                                  controller: _webFolderTextController,
+                                  keyboardType: TextInputType.none,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Dev Folder",
+                                  ),
+                                  maxLength: 100,
+                                ),
+                              ),
+                              ValueListenableBuilder<bool>(
                                   valueListenable: settings.forteller,
                                   builder: (context, value, child) {
                                     return CheckboxListTile(
@@ -506,7 +576,8 @@ class SettingsMenuState extends State<SettingsMenu> {
                                                 _fortellerEmailTextController
                                                     .text;
                                             settings.saveToDisk();
-                                            getIt<Downloader>().startFetchingData();
+                                            getIt<Downloader>()
+                                                .startFetchingData();
                                           } else {
                                             //close server
                                             getIt<Downloader>()
@@ -553,7 +624,8 @@ class SettingsMenuState extends State<SettingsMenu> {
                                       valueListenable:
                                           downloader.currentChapter,
                                       builder: (context, value, child) {
-                                        return Text("Chapter : $value");
+                                        return Text(
+                                            "Chapter ${downloader.currentChapter.value}");
                                       })),
                               Container(
                                   margin: const EdgeInsets.only(top: 5),

@@ -22,6 +22,7 @@ import 'package:frosthaven_assistant/Resource/state/character.dart';
 import 'package:frosthaven_assistant/Resource/state/loot_deck_state.dart';
 import 'package:frosthaven_assistant/Resource/state/monster.dart';
 import 'package:frosthaven_assistant/services/network/target.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
@@ -30,6 +31,7 @@ import 'package:shelf_static/shelf_static.dart' as shelf_static;
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
 import '../service_locator.dart';
+import 'package:path/path.dart' as p;
 
 class WebServer {
   static const String SHAMBLING_SKELETON = "Shambling Skeleton";
@@ -73,12 +75,23 @@ class WebServer {
 
   // Router instance to handler requests.
   Response _getOutFileHandler(Request request, String file) {
-    File f = File("D:/Frosthaven-TTS-assets/parser/out/${Uri.decodeFull(file)}");
-    return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "application/json"});
+    var folder = getIt<Settings>().webFolder.value;
+    if (folder != null && folder != "") {
+      File f = File(p.join(folder,Uri.decodeFull(file)));
+      return Response.ok(
+          f.readAsBytesSync(), headers: {"Content-Type": "application/json"});
+    } else {
+      return Response.internalServerError();
+    }
   }
-  Response _getFileHandler(Request request, String folder, String file) {
-      File f = File("D:/fh-audio/output/${Uri.decodeFull(folder)}/${Uri.decodeFull(file)}");
-      return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "audio/mp3"});
+  Future<Response> _getFileHandler(Request request, String folder, String file) async {
+      var path = p.join((await getApplicationDocumentsDirectory()).path,"frosthaven/audio/out");
+      File f = File(p.join(path,Uri.decodeFull(folder),Uri.decodeFull(file)));
+      if (await f.exists()) {
+        return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "audio/mp3"});
+      } else {
+        return Response.notFound("File not found");
+      }
   }
 
 

@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
 import 'package:frosthaven_assistant/services/service_locator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'forteller.dart';
 import 'package:path/path.dart' as p;
@@ -18,14 +19,13 @@ class Downloader {
 
   final currentTrack = ValueNotifier<String>("");
   final trackProgress = ValueNotifier<double>(0.0);
-  bool canceled = false;
 
   Future<void> stopFetchingData() async {
-    canceled = true;
+    getIt<Settings>().forteller.value = false;
   }
 
   void startFetchingData() {
-    canceled = false;
+    getIt<Settings>().forteller.value = true;
     fetchData();
   }
 
@@ -37,7 +37,7 @@ class Downloader {
     var catalog = await forteller.getCatalog();
     var frosthavenEntry =
         catalog.entries.firstWhere((element) => element.name == "Frosthaven");
-    var tempFolder = "frosthaven/temp";
+    var tempFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven/audio/temp");
     var chapters = await forteller.getChapters(frosthavenEntry.id);
 
     final Pattern scenarioPattern = RegExp(r'[0-9]{3}');
@@ -45,10 +45,10 @@ class Downloader {
     var totalChapters = chapters.length;
     var currentChapterNb = 1;
     for (var chapter in chapters) {
-      print("Processing Chapter $currentChapter/$totalChapters");
+      print("Processing Chapter ${currentChapter.value}/$totalChapters");
       chapterProgress.value =
       (currentChapterNb.toDouble()-1) / totalChapters.toDouble();
-      currentChapter.value = "$currentChapter of $totalChapters : ${chapter.name}";
+      currentChapter.value = "$currentChapterNb of $totalChapters : ${chapter.name}";
       currentChapterNb++;
       var trackCount = 0;
       var currentCount = 0;
@@ -67,15 +67,17 @@ class Downloader {
             currentTrackNb.toDouble() / playlist.content.length.toDouble();
         currentTrackNb++;
 
-        if (canceled) {
+        if (!getIt<Settings>().forteller.value) {
           return;
         }
         currentCount = await downloadTrack(forteller, chapterFolder, track,
             playlist, currentCount, trackCount);
       }
 
+      currentTrack.value = "Processing Chapter Downloads";
+      
       // Re-organize the content
-      var outFolder = "frosthaven/output";
+      var outFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven/audio/output");
       var scenarioFolder = p.join(outFolder, "scenarios");
       var sectionsFolder = p.join(outFolder, "sections");
       var soloFolder = p.join(outFolder, "solo");
@@ -186,8 +188,7 @@ class Downloader {
   Future<int> downloadTrack(Forteller forteller, String base, Track track,
       Playlist playlist, int currentCount, int totalCount) async {
     currentCount++;
-    base = sanitize(base);
-    var outFile = File(sanitize(p.join(base, "${track.title}.mp3")));
+    var outFile = File(p.join(base, "${sanitize(track.title)}.mp3"));
 
     if (outFile.existsSync()) {
       print(
@@ -200,7 +201,7 @@ class Downloader {
     }
     if (track.transition != null) {
       var tracks = track.transition.childNodes;
-      var subBase = p.join(base, "${track.title}.subs");
+      var subBase = p.join(base, "${sanitize(track.title)}.subs");
       for (var subTrack in tracks) {
         currentCount = await downloadTrack(
             forteller, subBase, subTrack, playlist, currentCount, totalCount);

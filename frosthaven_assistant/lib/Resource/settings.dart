@@ -46,16 +46,20 @@ class Settings {
   //network
   final server = ValueNotifier<bool>(false); //not saving these
 
-  final forteller = ValueNotifier<bool>(false);
-  String lastKnownFortellerEmail = "";
-  String lastKnownFortellerPassword = "";
-
   final client = ValueNotifier<ClientState>(ClientState.disconnected);
   String lastKnownConnection = "192.168.1.???"; //only these
   String lastKnownPort = "4567";
   String lastKnownHostIP = "";
 
   bool connectClientOnStartup = false;
+
+  final enableWebServer = ValueNotifier<bool>(false);
+  String lastKnownWebPort = "8080";
+  final webFolder = ValueNotifier<String>("");
+
+  final forteller = ValueNotifier<bool>(false);
+  String lastKnownFortellerEmail = "";
+  String lastKnownFortellerPassword = "";
 
   Future<void> init() async {
     await loadFromDisk();
@@ -257,6 +261,25 @@ class Settings {
           getIt<Client>().connect(lastKnownConnection);
         });
       }
+
+      if(data['enableWebServer'] != null) {
+        enableWebServer.value = data['enableWebServer'];
+      }
+
+      if(data['lastKnownWebPort'] != null) {
+        lastKnownWebPort = data['lastKnownWebPort'];
+      }
+
+      if(data['webFolder'] != null) {
+        webFolder.value = data['webFolder'];
+      }
+
+      if(data['lastKnownFortellerEmail'] != null) {
+        lastKnownFortellerEmail = data['lastKnownFortellerEmail'];
+      }
+      if(data['lastKnownFortellerPassword'] != null) {
+        lastKnownFortellerPassword = data['lastKnownFortellerPassword'];
+      }
     }
   }
 
@@ -309,6 +332,9 @@ class Settings {
         '"lastKnownConnection": "$lastKnownConnection", '
         '"lastKnownPort": "$lastKnownPort", '
         '"lastKnownHostIP": "$lastKnownHostIP", '
+        '"enableWebServer": ${enableWebServer.value}, '
+        '"lastKnownWebPort": "$lastKnownWebPort", '
+        '"webFolder": "${webFolder.value}", '
         '"lastKnownFortellerEmail": "$lastKnownFortellerEmail", '
         '"lastKnownFortellerPassword": "$lastKnownFortellerPassword" '
         '}';
