@@ -45,6 +45,11 @@ class Settings {
 
   //network
   final server = ValueNotifier<bool>(false); //not saving these
+
+  final forteller = ValueNotifier<bool>(false);
+  String lastKnownFortellerEmail = "";
+  String lastKnownFortellerPassword = "";
+
   final client = ValueNotifier<ClientState>(ClientState.disconnected);
   String lastKnownConnection = "192.168.1.???"; //only these
   String lastKnownPort = "4567";
@@ -303,7 +308,9 @@ class Settings {
         '"connectClientOnStartup": $connectClientOnStartup, '
         '"lastKnownConnection": "$lastKnownConnection", '
         '"lastKnownPort": "$lastKnownPort", '
-        '"lastKnownHostIP": "$lastKnownHostIP" '
+        '"lastKnownHostIP": "$lastKnownHostIP", '
+        '"lastKnownFortellerEmail": "$lastKnownFortellerEmail", '
+        '"lastKnownFortellerPassword": "$lastKnownFortellerPassword" '
         '}';
   }
 }

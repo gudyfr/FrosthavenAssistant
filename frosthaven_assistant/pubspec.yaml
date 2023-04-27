@@ -104,6 +104,8 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
   format: ^1.2.0
+  encrypt: ^5.0.1
+  process_run: ^0.13.0
 
 
 
