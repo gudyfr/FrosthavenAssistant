@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frosthaven_assistant/Resource/adjustable_scroll_controller.dart';
 import 'package:frosthaven_assistant/Resource/commands/track_standees_command.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
+import 'package:frosthaven_assistant/forteller/downloader.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import '../../Resource/scaling.dart';
 import '../../Resource/settings.dart';
@@ -31,6 +32,10 @@ class SettingsMenuState extends State<SettingsMenu> {
 
   final TextEditingController _serverTextController = TextEditingController();
   final TextEditingController _portTextController = TextEditingController();
+  final TextEditingController _fortellerEmailTextController =
+      TextEditingController();
+  final TextEditingController _fortellerPasswordTextController =
+      TextEditingController();
 
   final AdjustableScrollController scrollController =
       AdjustableScrollController();
@@ -38,6 +43,7 @@ class SettingsMenuState extends State<SettingsMenu> {
   @override
   Widget build(BuildContext context) {
     Settings settings = getIt<Settings>();
+    Downloader downloader = getIt<Downloader>();
 
     double screenWidth = MediaQuery.of(context).size.width;
     double referenceMinBarWidth = 40 * 6.5;
@@ -183,8 +189,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Custom Content"),
+                                  title: const Text("Show Custom Content"),
                                   value: settings.showCustomContent.value,
                                   onChanged: (bool? value) {
                                     setState(() {
@@ -194,19 +199,20 @@ class SettingsMenuState extends State<SettingsMenu> {
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Sections in Main Screen"),
+                                  title: const Text(
+                                      "Show Sections in Main Screen"),
                                   value: settings.showSectionsInMainView.value,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      settings.showSectionsInMainView.value = value!;
+                                      settings.showSectionsInMainView.value =
+                                          value!;
                                       settings.saveToDisk();
                                       getIt<GameState>().updateAllUI();
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Round Special Rule Reminders"),
+                                  title: const Text(
+                                      "Show Round Special Rule Reminders"),
                                   value: settings.showReminders.value,
                                   onChanged: (bool? value) {
                                     setState(() {
@@ -348,21 +354,28 @@ class SettingsMenuState extends State<SettingsMenu> {
                                   builder: (context, value, child) {
                                     bool connected = false;
                                     String connectionText = "Connect as Client";
-                                    if (settings.client.value == ClientState.connected) {
+                                    if (settings.client.value ==
+                                        ClientState.connected) {
                                       connected = true;
                                       connectionText = "Connected as Client";
                                     }
-                                    if (settings.client.value == ClientState.connecting) {
+                                    if (settings.client.value ==
+                                        ClientState.connecting) {
                                       connectionText = "Connecting...";
                                     }
                                     return CheckboxListTile(
-                                        enabled: settings.server.value == false && settings.client.value != ClientState.connecting,
+                                        enabled:
+                                            settings.server.value == false &&
+                                                settings.client.value !=
+                                                    ClientState.connecting,
                                         title: Text(connectionText),
                                         value: connected,
                                         onChanged: (bool? value) {
                                           setState(() {
-                                            if (settings.client.value != ClientState.connected) {
-                                              settings.client.value = ClientState.connecting;
+                                            if (settings.client.value !=
+                                                ClientState.connected) {
+                                              settings.client.value =
+                                                  ClientState.connecting;
                                               settings.lastKnownPort =
                                                   _portTextController.text;
                                               getIt<Client>()
@@ -373,8 +386,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                                   _serverTextController.text;
                                               settings.saveToDisk();
                                             } else {
-                                              getIt<Client>()
-                                                  .disconnect(null);
+                                              getIt<Client>().disconnect(null);
                                             }
                                           });
                                         });
@@ -408,7 +420,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                 ),
                               ),
                               ValueListenableBuilder<bool>(
-                                  valueListenable: settings.server,
+                                  valueListenable: settings.forteller,
                                   builder: (context, value, child) {
                                     return CheckboxListTile(
                                         title: Text(settings.server.value
@@ -420,10 +432,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                             settings.lastKnownPort =
                                                 _portTextController.text;
                                             settings.lastKnownHostIP =
-                                                "(${getIt<Network>()
-                                                  .networkInfo
-                                                  .wifiIPv4
-                                                  .value})";
+                                                "(${getIt<Network>().networkInfo.wifiIPv4.value})";
                                             settings.saveToDisk();
                                             getIt<Network>()
                                                 .server
@@ -479,7 +488,106 @@ class SettingsMenuState extends State<SettingsMenu> {
                                   ),
                                   maxLength: 6,
                                 ),
-                              )
+                              ),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: settings.forteller,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text(settings.forteller.value
+                                            ? "Suspend Forteller download"
+                                            : "Start Forteller download"),
+                                        value: settings.forteller.value,
+                                        onChanged: (bool? value) {
+                                          if (!settings.forteller.value) {
+                                            settings.lastKnownFortellerPassword =
+                                                _fortellerPasswordTextController
+                                                    .text;
+                                            settings.lastKnownFortellerEmail =
+                                                _fortellerEmailTextController
+                                                    .text;
+                                            settings.saveToDisk();
+                                            getIt<Downloader>().startFetchingData();
+                                          } else {
+                                            //close server
+                                            getIt<Downloader>()
+                                                .stopFetchingData();
+                                          }
+                                        });
+                                  }),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 250,
+                                height: 40,
+                                child: TextField(
+                                  controller: _fortellerEmailTextController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Forteller email",
+                                  ),
+                                  maxLength: 100,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 250,
+                                height: 40,
+                                child: TextField(
+                                  controller: _fortellerPasswordTextController,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Forteller password",
+                                  ),
+                                  maxLength: 30,
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                ),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: 250,
+                                  height: 20,
+                                  child: ValueListenableBuilder<String>(
+                                      valueListenable:
+                                          downloader.currentChapter,
+                                      builder: (context, value, child) {
+                                        return Text("Chapter : $value");
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5),
+                                  width: 250,
+                                  height: 10,
+                                  child: ValueListenableBuilder<double>(
+                                      valueListenable:
+                                          downloader.chapterProgress,
+                                      builder: (context, value, child) {
+                                        return LinearProgressIndicator(
+                                          value:
+                                              downloader.chapterProgress.value,
+                                        );
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: 250,
+                                  height: 20,
+                                  child: ValueListenableBuilder<String>(
+                                      valueListenable: downloader.currentTrack,
+                                      builder: (context, value, child) {
+                                        return Text("Track $value");
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5),
+                                  width: 250,
+                                  height: 10,
+                                  child: ValueListenableBuilder<double>(
+                                      valueListenable: downloader.trackProgress,
+                                      builder: (context, value, child) {
+                                        return LinearProgressIndicator(
+                                          value: downloader.trackProgress.value,
+                                        );
+                                      }))
                               //checkbox client + host + port
                               //checkbox server - show ip, port
                             ],
