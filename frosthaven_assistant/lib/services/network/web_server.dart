@@ -76,7 +76,7 @@ class WebServer {
   // Router instance to handler requests.
   Response _getOutFileHandler(Request request, String file) {
     var folder = getIt<Settings>().webFolder.value;
-    if (folder != null && folder != "") {
+    if (folder != "") {
       File f = File(p.join(folder,Uri.decodeFull(file)));
       return Response.ok(
           f.readAsBytesSync(), headers: {"Content-Type": "application/json"});
@@ -85,10 +85,11 @@ class WebServer {
     }
   }
   Future<Response> _getFileHandler(Request request, String folder, String file) async {
-      var path = p.join((await getApplicationDocumentsDirectory()).path,"frosthaven/audio/out");
+      var path = p.join((await getApplicationDocumentsDirectory()).path,"frosthaven","audio","output");
       File f = File(p.join(path,Uri.decodeFull(folder),Uri.decodeFull(file)));
+      print(f.path);
       if (await f.exists()) {
-        return Response.ok(f.readAsBytesSync(), headers: {"Content-Type" : "audio/mp3"});
+        return Response.ok(await f.readAsBytes(), headers: {"Content-Type" : "audio/mp3"});
       } else {
         return Response.notFound("File not found");
       }
