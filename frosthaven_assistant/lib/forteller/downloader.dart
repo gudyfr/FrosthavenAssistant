@@ -37,7 +37,7 @@ class Downloader {
     var catalog = await forteller.getCatalog();
     var frosthavenEntry =
         catalog.entries.firstWhere((element) => element.name == "Frosthaven");
-    var tempFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven/audio/temp");
+    var tempFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven","audio","temp");
     var chapters = await forteller.getChapters(frosthavenEntry.id);
 
     final Pattern scenarioPattern = RegExp(r'[0-9]{3}');
@@ -77,7 +77,7 @@ class Downloader {
       currentTrack.value = "Processing Chapter Downloads";
       
       // Re-organize the content
-      var outFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven/audio/output");
+      var outFolder = p.join((await getApplicationDocumentsDirectory()).path, "frosthaven","audio","output");
       var scenarioFolder = p.join(outFolder, "scenarios");
       var sectionsFolder = p.join(outFolder, "sections");
       var soloFolder = p.join(outFolder, "solo");
