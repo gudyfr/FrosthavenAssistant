@@ -10,6 +10,22 @@ class Connection {
     return _sockets;
   }
 
+  Future<Socket> connect(String address, int port) async {
+    final resolvedAddresses = await _resolveAddress(address);
+    var socket = await Socket.connect(resolvedAddresses.first, port);
+    add(socket);
+    return socket;
+  }
+
+  Future<List<InternetAddress>> _resolveAddress(String address) async {
+    List<InternetAddress> resolvedAddresses =
+          await InternetAddress.lookup(address);
+      if (resolvedAddresses.isEmpty) {
+        throw Exception("Unable to resolve host");
+      }
+    return resolvedAddresses;
+  }
+
   void add(Socket socket) {
     _cleanUpClosedConnections();
     if (!_isClosed(socket)) {
@@ -38,8 +54,7 @@ class Connection {
   }
 
   Iterable<Socket> _find(Socket socket) {
-    return _sockets.where((x) =>
-        x.remoteAddress == socket.remoteAddress);
+    return _sockets.where((x) => x.remoteAddress == socket.remoteAddress);
   }
 
   void _destroy(Iterable<Socket> sockets) {

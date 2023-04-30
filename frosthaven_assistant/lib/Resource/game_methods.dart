@@ -388,6 +388,7 @@ class GameMethods {
                 item.characterState.health.value;
             item.characterState.xp.value = 0;
             item.characterState.conditions.value.clear();
+            item.characterState.chill.value = 0;
             item.characterState.summonList.value.clear();
 
             if (item.id == "Beast Tyrant") {
@@ -404,7 +405,7 @@ class GameMethods {
       }
 
       _gameState.modifierDeck.initDeck("");
-      _gameState.modifierDeckAllies.initDeck("Allies");
+      _gameState.modifierDeckAllies.initDeck("allies");
       _gameState._currentList = newList;
 
       //loot deck init
