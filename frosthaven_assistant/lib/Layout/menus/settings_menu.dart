@@ -240,6 +240,16 @@ class SettingsMenuState extends State<SettingsMenu> {
                                         settings.saveToDisk();
                                       });
                                     }),
+                              if(Platform.isIOS || Platform.isWindows || Platform.isLinux)
+                                CheckboxListTile(
+                                    title: const Text("Always on Top"),
+                                    value: settings.alwaysOnTop.value,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        settings.setAlwaysOnTop(value!);
+                                        settings.saveToDisk();
+                                      });
+                                    }),
                               Container(
                                 constraints: const BoxConstraints(
                                     minWidth: double.infinity),
