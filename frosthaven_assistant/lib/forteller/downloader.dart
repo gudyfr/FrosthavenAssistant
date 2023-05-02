@@ -97,7 +97,8 @@ class Downloader {
             "Introduction.mp3",
             "Intro.mp3",
             "introduction.mp3",
-            " Introduction.mp3"
+            " Introduction.mp3",
+            "Introduction .mp3",
           ];
           for (var candidate in introductionCandidates) {
             File introduction = File(p.join(chapterFolder, candidate));
