@@ -161,7 +161,7 @@ class Downloader {
     for (var entity in dir.listSync()) {
       var stat = entity.statSync();
       if (stat.type == FileSystemEntityType.file) {
-        var name = p.basename(entity.path).trim();
+        var name = p.basenameWithoutExtension(entity.path).trim() + p.extension(entity.path);
         if (sectionsPattern.hasMatch(name)) {
           var destination = p.join(sectionsFolder, name);
           if (!File(destination).existsSync()) {
