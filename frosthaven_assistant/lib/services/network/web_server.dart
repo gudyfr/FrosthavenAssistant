@@ -52,7 +52,6 @@ class WebServer {
       ..post('/setScenario', _setScenarioHandler)
       ..post('/setSection', _setSectionHandler)
       ..post('/applyCondition', _applyConditionHandler)
-      ..post('/changeHealth', _applyHealthChangeHandler)
       ..post('/change', _applyChangeHandler)
       ..post('/setElement', _applySetElementHandler)
       ..post('/loot', _lootHandler);
