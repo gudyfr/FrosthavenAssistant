@@ -8,6 +8,7 @@ import 'package:frosthaven_assistant/Layout/menus/remove_monster_menu.dart';
 import 'package:frosthaven_assistant/Layout/menus/select_scenario_menu.dart';
 import 'package:frosthaven_assistant/Layout/menus/settings_menu.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
+import 'package:frosthaven_assistant/services/network/web_server.dart';
 import 'package:frosthaven_assistant/services/network/client.dart';
 import 'package:frosthaven_assistant/services/network/web_server.dart';
 import 'package:frosthaven_assistant/services/service_locator.dart';

@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:frosthaven_assistant/forteller/downloader.dart';
 import 'package:frosthaven_assistant/services/network/server.dart';
 import 'package:frosthaven_assistant/services/network/web_server.dart';
-
-
-
 import '../service_locator.dart';
 import 'client.dart';
 import 'network_info.dart';
