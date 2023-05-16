@@ -45,11 +45,11 @@ double getMainListWidth(BuildContext context) { //wrong
 }
 
 double _scaleByReference(BuildContext context, double referenceWidth, double maxWidth) {
-
-  var screenSize = MediaQuery.of(context).size;
-  var width = min(screenSize.width, maxWidth);
-  double fraction = width/referenceWidth;
-  return fraction;
+  return 2.0;
+  // var screenSize = MediaQuery.of(context).size;
+  // var width = min(screenSize.width, maxWidth);
+  // double fraction = width/referenceWidth;
+  // return fraction;
 }
 
 

@@ -76,15 +76,15 @@ class MonsterAbilityCardWidget extends StatefulWidget {
     List<Widget> positionals = buildGraphicPositionals(scale, card.graphicPositional);
 
     return Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 4 * scale,
-              offset: Offset(2 * scale, 4 * scale), // Shadow position
-            ),
-          ],
-        ),
+        // decoration: BoxDecoration(
+        //   boxShadow: [
+        //     BoxShadow(
+        //       color: Colors.black45,
+        //       blurRadius: 4 * scale,
+        //       offset: Offset(2 * scale, 4 * scale), // Shadow position
+        //     ),
+        //   ],
+        // ),
         key: const ValueKey<int>(1),
         margin: EdgeInsets.all(2 * scale * 0.8),
         width: 178 * 0.8 * scale,
