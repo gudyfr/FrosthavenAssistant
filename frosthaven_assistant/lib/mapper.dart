@@ -51,7 +51,9 @@ void main() async {
   var namesToUrls = <String, String>{};
   for (var entry in cloudInfo.entries) {
     var entryMap = entry.value as Map<String, dynamic>;
-    namesToUrls[entryMap["Name"]!] = entryMap["URL"]!;
+    if(! (entryMap["Folder"] as String).contains("Attack Modifiers")) {
+      namesToUrls[entryMap["Name"]!] = entryMap["URL"]!;
+    }
   }
   if (false && await dir.exists()) {
     dir.list().listen((entity) async {
@@ -75,9 +77,10 @@ void main() async {
     });
   }
 
-  getFileMappings(
-      p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
-  getFileMappings("D:/fhtts/docs/images/initiativeTrackers", namesToUrls);
+  // getFileMappings(
+  //     p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
+  // getFileMappings("D:/fhtts/docs/images/initiativeTrackers", namesToUrls);
+  getFileMappings("D:/fhtts/docs/images/attackModifiers", namesToUrls);
 }
 
 void getFileMappings(String path, Map<String, String> nameToUrls) async {
