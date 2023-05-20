@@ -51,16 +51,19 @@ void main() async {
   var namesToUrls = <String, String>{};
   for (var entry in cloudInfo.entries) {
     var entryMap = entry.value as Map<String, dynamic>;
-    if(! (entryMap["Folder"] as String).contains("Attack Modifiers")) {
+    if (!(entryMap["Folder"] as String).contains("Attack Modifiers")) {
       namesToUrls[entryMap["Name"]!] = entryMap["URL"]!;
     }
   }
   if (false && await dir.exists()) {
-    dir.list().listen((entity) async {
+    await for (final entity in dir.list()) {
       if ((await entity.stat()).type == FileSystemEntityType.file) {
         var content = await File(entity.path).readAsBytes();
         var hash = SHA1().update(content).digest();
         var fileName = encodeHEX(hash);
+        debugPrint(
+            "${entity.path} => $fileName => ${namesToUrls["$fileName.png"]}");
+
         File outputFile = File(p.join(outputPath, "$fileName.png"));
         if (!await outputFile.exists()) {
           outputFile.writeAsBytes(content);
@@ -68,37 +71,35 @@ void main() async {
         mapping[p.basenameWithoutExtension(entity.path)] =
             namesToUrls["$fileName.png"] ?? "";
       }
-    }).onDone(() async {
-      var output = mapping.entries
-          .map((entry) => "\"${entry.key}\" : \"${entry.value}\"")
-          .join(",");
-      await File(p.join(outputPath, "_mapping.json"))
-          .writeAsString("{$output}", flush: true, mode: FileMode.writeOnly);
-    });
+    }
+    var output = mapping.entries
+        .map((entry) => "\"${entry.key}\" : \"${entry.value}\"")
+        .join(",");
+    await File(p.join(outputPath, "_mapping.json"))
+        .writeAsString("{$output}", flush: true);
   }
 
-  // getFileMappings(
-  //     p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
+  getFileMappings(
+      p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
   // getFileMappings("D:/fhtts/docs/images/initiativeTrackers", namesToUrls);
-  getFileMappings("D:/fhtts/docs/images/attackModifiers", namesToUrls);
+  // getFileMappings("D:/fhtts/docs/images/attackModifiers", namesToUrls);
 }
 
 void getFileMappings(String path, Map<String, String> nameToUrls) async {
   var mappings = <String, String>{};
   var directory = Directory(path);
   if (await directory.exists()) {
-    directory.list().listen((entity) async {
+    await for (var entity in directory.list()) {
       if ((await entity.stat()).type == FileSystemEntityType.file) {
         var fileName = p.basename(entity.path);
         var url = nameToUrls[fileName] ?? "";
         mappings[p.basenameWithoutExtension(entity.path)] = url;
       }
-    }).onDone(() async {
-      var output = mappings.entries
-          .map((entry) => "\"${entry.key}\" : \"${entry.value}\"")
-          .join(",");
-      await File(p.join(path, "mapping.json")).writeAsString("{$output}");
-    });
+    }
+    var output = mappings.entries
+        .map((entry) => "\"${entry.key}\" : \"${entry.value}\"")
+        .join(",");
+    await File(p.join(path, "mapping.json")).writeAsString("{$output}");
   }
 }
 
