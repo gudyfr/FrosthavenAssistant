@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:frosthaven_assistant/Model/MonsterAbility.dart';
 import 'package:frosthaven_assistant/Model/campaign.dart';
+import 'package:frosthaven_assistant/Model/character_class.dart';
 import 'package:frosthaven_assistant/Model/monster.dart';
 import 'package:frosthaven_assistant/Model/scenario.dart';
+import 'package:frosthaven_assistant/Model/summon.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,10 +19,13 @@ void main() async {
   final model = CampaignModel.fromJson(data, const []);
   final output = <String, dynamic>{};
 
-  output['monsters'] = model.monsters.values.map((e) => convertMonster(e)).toList();
-  output['decks'] = model.monsterAbilities.map((e) => convertDeck(e)).toList();
+  output['monsters'] = { for (var e in model.monsters.values.map((e) => convertMonster(e))) e['internal'] : e } ;
+  output['decks'] = {for (var e in model.monsterAbilities.map((e) => convertDeck(e))) e['name'] : e};
   output['scenarios'] = model.scenarios.map((k,v) => MapEntry(k, convertScenario(v)));
-  File("out.json").writeAsString(json.encode(output));
+  output['characters'] = {for (var e in model.characters.map((e) => convertCharacter(e))) e['name'] : e };
+  File("D:/fhtts/docs/gameData.json").writeAsString(json.encode(output));
+  var encoder = JsonEncoder.withIndent("\t");
+  File("D:/fhtts/gameData.human.json").writeAsString(encoder.convert(output));
 }
 
 convertMonster(MonsterModel model) {
@@ -51,7 +56,7 @@ convertMonsterLevelModel(MonsterLevelModel model) {
 convertMonsterStatsModel(MonsterStatsModel model) {
   var output = <String,dynamic>{};
   output['hp'] = model.health;
-  if (model.immunities.length > 0) {
+  if (model.immunities.isNotEmpty) {
     output['immunities'] =
         model.immunities.map((e) => e.replaceAll("%", "")).toList();
   }
@@ -95,4 +100,22 @@ convertScenario(ScenarioModel model) {
 
 convertLootDeck(LootDeckModel model) {
   return [model.arrowvine, model.axenut, model.coin, model.corpsecap, model.flamefruit, model.hide, model.lumber, model.metal, model.rockroot, model.snowthistle, model.treasure];
+}
+
+
+convertCharacter(CharacterClass e) {
+  var output = <String,dynamic>{};
+  output['name'] = e.name;
+  output['hps'] = e.healthByLevel;
+  output['summons'] = e.summons.map((e) => convertSummon(e)).toList();
+  return output;
+
+}
+
+convertSummon(SummonModel e) {
+  var output = <String, dynamic>{};
+  output['name'] = e.name;
+  output['hp'] = e.health;
+  output['maxInstances'] = e.standees;
+  return output;
 }

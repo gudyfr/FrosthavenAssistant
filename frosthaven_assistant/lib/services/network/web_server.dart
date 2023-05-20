@@ -54,19 +54,19 @@ class WebServer {
       ..get('/out/<file>', _getOutFileHandler)
       ..get('/getLoot', _getLootHandler)
       ..post('/startRound', _startRoundHandler)
-      ..post('/endRound', _endRoundHandler)..post(
-          '/addMonster', _addMonsterHandler)..post(
-          '/addCharacter', _addCharacterHandler)..post(
-          '/removeCharacter', _removeCharacterHandler)..post(
-          '/switchMonster', _switchMonsterTypeHandler)..post(
-          '/setScenario', _setScenarioHandler)..post(
-          '/setSection', _setSectionHandler)..post(
-          '/applyCondition', _applyConditionHandler)..post(
-          '/change', _applyChangeHandler)..post(
-          '/setElement', _applySetElementHandler)..post(
-          '/loot', _lootHandler)..post(
-          '/setCurrentTurn', _setCurrentTurnHandler)..post(
-          '/endScenario', _endScenarioHandler);
+      ..post('/endRound', _endRoundHandler)
+      ..post('/addMonster', _addMonsterHandler)
+      ..post('/addCharacter', _addCharacterHandler)
+      ..post('/removeCharacter', _removeCharacterHandler)
+      ..post('/switchMonster', _switchMonsterTypeHandler)
+      ..post('/setScenario', _setScenarioHandler)
+      ..post('/setSection', _setSectionHandler)
+      ..post('/applyCondition', _applyConditionHandler)
+      ..post('/change', _applyChangeHandler)
+      ..post('/setElement', _applySetElementHandler)
+      ..post('/loot', _lootHandler)
+      ..post('/setCurrentTurn', _setCurrentTurnHandler)
+      ..post('/endScenario', _endScenarioHandler);
 
     _server = await shelf_io.serve(
       // See https://pub.dev/documentation/shelf/latest/shelf/logRequests.html
@@ -89,30 +89,33 @@ class WebServer {
   Response _getOutFileHandler(Request request, String file) {
     var folder = getIt<Settings>().webFolder.value;
     if (folder != "") {
-      File f = File(p.join(folder,Uri.decodeFull(file)));
-      return Response.ok(
-          f.readAsBytesSync(), headers: {"Content-Type": "application/json"});
+      File f = File(p.join(folder, Uri.decodeFull(file)));
+      return Response.ok(f.readAsBytesSync(),
+          headers: {"Content-Type": "application/json"});
     } else {
       return Response.internalServerError();
     }
   }
 
-  Future<Response> _getFileHandler(Request request, String folder, String file) async {
-      var path = p.join((await getApplicationDocumentsDirectory()).path,"frosthaven","audio","output");
-      File f = File(p.join(path,Uri.decodeFull(folder),Uri.decodeFull(file)));
-      // print(f.path);
-      if (await f.exists()) {
-        return Response.ok(await f.readAsBytes(), headers: {"Content-Type" : "audio/mp3"});
-      } else {
-        return Response.notFound("File not found");
-      }
+  Future<Response> _getFileHandler(
+      Request request, String folder, String file) async {
+    var path = p.join((await getApplicationDocumentsDirectory()).path,
+        "frosthaven", "audio", "output");
+    File f = File(p.join(path, Uri.decodeFull(folder), Uri.decodeFull(file)));
+    // print(f.path);
+    if (await f.exists()) {
+      return Response.ok(await f.readAsBytes(),
+          headers: {"Content-Type": "audio/mp3"});
+    } else {
+      return Response.notFound("File not found");
+    }
   }
 
-  Future<Response> _playFileHandler(Request request, String folder, String file) async {
+  Future<Response> _playFileHandler(
+      Request request, String folder, String file) async {
     _gameState.playAudio(folder, file);
     return Response.ok("");
   }
-
 
   Response _getStateHandler(Request request) {
     Map<String, int> elements = {};
@@ -152,21 +155,20 @@ class WebServer {
     var scenario = _gameState.scenario.value;
     var regexp = RegExp(r'#([^\s]+)\s(.*)');
     RegExpMatch? match = regexp.firstMatch(scenario);
-    if(match != null) {
+    if (match != null) {
       var number = match[1];
       var name = match[2];
       var key = "#$section $name ($number)";
       print("Adding section $key");
       try {
         _gameState.action(SetScenarioCommand(key, true));
-      } catch(e) {
+      } catch (e) {
         return Response.notFound("Section not found in scenario");
       }
       return Response.ok("");
     } else {
       return Response.notFound("");
     }
-    
   }
 
   Future<Response> _setScenarioHandler(Request request) async {
@@ -207,7 +209,8 @@ class WebServer {
   Target? findTarget(String target, int nr) {
     // A bit of hackery for targets which include their number in their name
     // eg. Shambling Skeletons and Brothers in #87
-    if(target.substring(target.length-2, target.length-1) == " " && "123456789".contains(target.substring(target.length-1))) {
+    if (target.substring(target.length - 2, target.length - 1) == " " &&
+        "123456789".contains(target.substring(target.length - 1))) {
       nr = int.parse(target.substring(target.length - 1));
       target = target.substring(0, target.length - 2);
     }
@@ -301,11 +304,10 @@ class WebServer {
     var target = findTarget(name, nr);
     if (target != null) {
       if (what == "hp" || what == "health") {
-        _gameState.action(
-            ChangeHealthCommand(change, target.id, target.ownerId));
+        _gameState
+            .action(ChangeHealthCommand(change, target.id, target.ownerId));
       } else if (what == "xp") {
-        _gameState.action(
-            ChangeXPCommand(change, target.id, target.ownerId));
+        _gameState.action(ChangeXPCommand(change, target.id, target.ownerId));
       } else if (what == "level") {
         _gameState.action(SetCharacterLevelCommand(change, target.id));
       }
@@ -338,7 +340,7 @@ class WebServer {
     _gameState.action(NextRoundCommand());
     return Response.ok('{}');
   }
-  
+
   Future<Response> _addCharacterHandler(Request request) async {
     var data = Uri.decodeFull(await request.readAsString());
     Map<String, dynamic> info = jsonDecode(data);
@@ -351,8 +353,10 @@ class WebServer {
     var data = Uri.decodeFull(await request.readAsString());
     Map<String, dynamic> info = jsonDecode(data);
     var characterName = info["character"];
-    var matchingCharacters =  _gameState.currentList.where((e) => e is Character && e.id == characterName).map((e) => e as Character);
-    if(matchingCharacters.isNotEmpty) {
+    var matchingCharacters = _gameState.currentList
+        .where((e) => e is Character && e.id == characterName)
+        .map((e) => e as Character);
+    if (matchingCharacters.isNotEmpty) {
       _gameState.action(RemoveCharacterCommand(matchingCharacters.toList()));
     }
     return _getStateHandler(request);
@@ -480,7 +484,8 @@ class WebServer {
         .map((c) =>
             '"${c.key}" : {${charactersLoot[c.key]!.entries.map((e) => '"${e.key}": ${e.value}').join(",")}}')
         .join(",");
-    return Response.ok('{"loot" : {$output}, "baseXp":${GameMethods.getXPValue()}, "coinValue" : ${GameMethods.getCoinValue()}}',
+    return Response.ok(
+        '{"loot" : {$output}, "baseXp":${GameMethods.getXPValue()}, "coinValue" : ${GameMethods.getCoinValue()}}',
         headers: {"Content-Type": "application/json"});
   }
 
