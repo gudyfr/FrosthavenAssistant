@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/assertions.dart';
 import 'package:frosthaven_assistant/Layout/monster_ability_card.dart';
 import 'package:frosthaven_assistant/Layout/monster_stat_card.dart';
 import 'package:frosthaven_assistant/Layout/monster_widget.dart';
@@ -16,6 +17,7 @@ import 'package:path/path.dart' as p;
 
 import '../Resource/color_matrices.dart';
 
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ScreenshotController screenshotController = ScreenshotController();
@@ -24,9 +26,9 @@ void main() {
   gameState.modelData.addListener(() async {
     var documentsPath = await getApplicationDocumentsDirectory();
     var abilityCardsOutputFolder =
-        p.join(documentsPath.path, "frosthaven", "abilityCards");
+    p.join(documentsPath.path, "frosthaven", "abilityCards");
     var statsCardsOutputFolder =
-        p.join(documentsPath.path, "frosthaven", "statsCards");
+    p.join(documentsPath.path, "frosthaven", "statsCards");
     await Directory(abilityCardsOutputFolder).create(recursive: true);
     await Directory(statsCardsOutputFolder).create(recursive: true);
     var frosthavenModel = gameState.modelData.value['Frosthaven'];
@@ -45,7 +47,7 @@ void main() {
           if (monsterAbilityCards != null) {
             for (var level in monster.levels) {
               var monsterInstance =
-                  GameMethods.createMonster(monster.name, level.level, false);
+              GameMethods.createMonster(monster.name, level.level, false);
               if (monsterInstance != null) {
                 for (var monsterAbilityCard in monsterAbilityCards) {
                   var outputPath = p.join(abilityCardsOutputFolder,
@@ -53,13 +55,14 @@ void main() {
                   if (!await File(outputPath).exists()) {
                     var content = await screenshotController.captureFromWidget(
                         MonsterAbilityCardWidget.buildFront(
-                            monsterAbilityCard, monsterInstance, 2.0, true),
-                        pixelRatio: 2.0);
+                            monsterAbilityCard, monsterInstance, 1.0, true),
+                        pixelRatio: 4.0);
 
                     File(outputPath).writeAsBytes(content);
                   } else {
                     print(
-                        "Skipping ${monster.name}_${level.level}_${monsterAbilityCard.nr}");
+                        "Skipping ${monster.name}_${level
+                            .level}_${monsterAbilityCard.nr}");
                   }
                 }
 
@@ -143,7 +146,7 @@ Widget buildImagePart(Monster data, double height, double scale, bool grey) {
               style: TextStyle(
                   fontFamily: frosthavenStyle ? "GermaniaOne" : 'Pirata',
                   color: Colors.white,
-                  fontSize: 12.4 * scale,
+                  fontSize: 10 * scale,
                   shadows: [
                     Shadow(
                       offset: Offset(1 * scale, 1 * scale),

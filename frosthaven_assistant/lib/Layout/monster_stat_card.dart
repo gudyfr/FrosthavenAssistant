@@ -35,60 +35,13 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
     super.initState();
   }
 
-  static void _handleAddPressed(
-      Monster data, BuildContext context, bool left, bool isBoss) {
-    Settings settings = getIt<Settings>();
-    if (settings.noStandees.value == true) {
-      getIt<GameState>()
-          .action(ActivateMonsterTypeCommand(data.id, !data.isActive));
-      return;
-    }
-
-    if (data.monsterInstances.value.length == data.type.count - 1) {
-      //directly add last standee
-      GameMethods.addStandee(
-          null,
-          data,
-          isBoss
-              ? MonsterType.boss
-              : left
-                  ? MonsterType.normal
-                  : MonsterType.elite,
-          false);
-    } else if (data.monsterInstances.value.length < data.type.count - 1) {
-      if (settings.randomStandees.value == true) {
-        int standeeNr = GameMethods.getRandomStandee(data);
-        if (standeeNr != 0) {
-          getIt<GameState>().action(AddStandeeCommand(
-              standeeNr,
-              null,
-              data.id,
-              isBoss
-                  ? MonsterType.boss
-                  : left
-                  ? MonsterType.normal
-                  : MonsterType.elite,
-              false));
-        }
-      } else {
-        openDialog(
-          context,
-          AddStandeeMenu(
-            elite: !left,
-            monster: data,
-          ),
-        );
-      }
-    }
-  }
-
   static Widget buildNormalLayout(Monster data, double scale, var shadow,
       var leftStyle, var rightStyle, bool frosthavenStyle) {
     MonsterStatsModel normal = data.type.levels[data.level.value].normal!;
     MonsterStatsModel? elite = data.type.levels[data.level.value].elite;
     double height = 123 * 0.8 * scale;
 
-    bool noCalculationSetting = getIt<Settings>().noCalculation.value;
+    bool noCalculationSetting = true;
 
     //normal stats calculated:
     String health = normal.health.toString();
@@ -281,7 +234,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
 
   static Widget buildBossLayout(Monster data, double scale, var shadow,
       var leftStyle, var rightStyle, bool frosthavenStyle) {
-    bool noCalculationSetting = getIt<Settings>().noCalculation.value;
+    bool noCalculationSetting = true;
     double height = 123 * 0.8 * scale;
     MonsterStatsModel normal = data.type.levels[data.level.value].boss!;
     //normal stats calculated:
@@ -449,7 +402,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
                                 style: specialStyle,
                               ),
                               SizedBox(
-                                  width: 112 * scale,
+                                  width: 116 * scale,
                                   child: LineBuilder.createLines(
                                       data.type.levels[data.level.value].boss!
                                           .special1,
@@ -539,7 +492,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
   }
 
   static Widget buildCard(Monster data, double scale) {
-    bool frosthavenStyle = GameMethods.isFrosthavenStyle(data.type);
+    bool frosthavenStyle = true;
 
     var shadow = Shadow(
       offset: Offset(0.4 * scale, 0.4 * scale),
@@ -582,12 +535,12 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
               //     ),
               //   ],
               // ),
-              margin: EdgeInsets.all(2 * scale * 0.8),
+              margin: EdgeInsets.only(left:2 * scale),
               child: isBoss
                   ? buildBossLayout(data, scale, shadow, leftStyle, rightStyle,
-                      frosthavenStyle)
+                      true)
                   : buildNormalLayout(data, scale, shadow, leftStyle,
-                      rightStyle, frosthavenStyle));
+                      rightStyle, true));
         });
   }
 
