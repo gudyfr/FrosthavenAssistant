@@ -92,6 +92,7 @@ void getFileMappings(String path, Map<String, String> nameToUrls) async {
     await for (var entity in directory.list()) {
       if ((await entity.stat()).type == FileSystemEntityType.file) {
         var fileName = p.basename(entity.path);
+        debugPrint("Processing $fileName");
         var url = nameToUrls[fileName] ?? "";
         mappings[p.basenameWithoutExtension(entity.path)] = url;
       }
