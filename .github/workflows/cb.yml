@@ -57,22 +57,8 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: 'keystore.jks'
+          fileName: '$RUNNER_TEMP/release.keystore'
           encodedString: ${{ secrets.SECRET_KEYSTORE_B64 }}
-      - name: Write value to Properties-file
-        uses: christian-draeger/write-properties@1.1.0
-        with:
-          path: 'frosthaven_assistant/android/key.properties'
-          property: |
-            'storeFile'
-            'storePassword'
-            'keyAlias'
-            'keyPassword'
-          value: |
-            'keystore.jks'
-            '${{ secrets.KEYSTORE_PASSWORD }}'
-            '${{ secrets.KEY_ALIAS }}'
-            '${{ secrets.KEYSTORE_PASSWORD }}'
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
@@ -84,15 +70,18 @@ jobs:
           java-version: '11'
       - name: Install project dependencies
         run: flutter pub get
-      - name: Generate intermediates
-        run: flutter build apk --release  
+      - name: Generate App Bundle
+        run: flutter build appbundle --release  
+      - name: Sign Android App Bundle
+        run: jarsigner -keystore $RUNNER_TEMP/release.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
+
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: frosthaven-assistant-webserver-android.zip
-          directory: frosthaven_assistant/build/app/outputs/apk/release/
-          path: app-release.apk
+          directory:  build/app/outputs/bundle/release/
+          path: app-release-signed.aab
       - name: Android Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
