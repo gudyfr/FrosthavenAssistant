@@ -182,12 +182,9 @@ jobs:
       - name: Build artifacts
         run: flutter build macos --release
       - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: frosthaven-assistant-webserver-macos.zip
-          directory: frosthaven_assistant/build/macos/Build/Products/Release
-          path: '"X-Haven Assistant.app"'
+        run: |
+          cd build/macos/Build/Products/Release/
+          ditto -c -k --sequesterRsrc --keepParent X-Haven\ Assistant.app frosthaven-assistant-webserver-macos.zip
       - name: macOS Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
