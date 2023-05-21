@@ -86,7 +86,6 @@ jobs:
           files: frosthaven_assistant/build/windows/runner/Release/frosthaven-assistant-webserver-windows.zip
 
   build-and-release-macos:
-    if: ${{ false }}
     runs-on: macos-latest
 
     steps:
