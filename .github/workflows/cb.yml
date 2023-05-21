@@ -53,6 +53,26 @@ jobs:
       - uses: actions/checkout@v2      
         with :
           ref: 'webserver'
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.SECRET_KEYSTORE_B64 }}
+      - name: Write value to Properties-file
+        uses: christian-draeger/write-properties@1.1.0
+        with:
+          path: 'frosthaven_assistant/android/key.properties'
+          property: |
+            'storeFile'
+            'storePassword'
+            'keyAlias'
+            'keyPassword'
+          value: |
+            'keystore.jks'
+            '${{ secrets.KEYSTORE_PASSWORD }}'
+            '${{ secrets.KEY_ALIAS }}'
+            '${{ secrets.KEYSTORE_PASSWORD }}'
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
