@@ -108,7 +108,7 @@ jobs:
         uses: chpoit/js-copy-github-action@master
         with:
           source: "release material/ffmpeg.exe"
-          target: "frosthaven_assistant/build/windows/runner/Release/ffmpeg.exe"
+          target: "frosthaven_assistant/build/windows/runner/Release/"
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
@@ -176,4 +176,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          files: frosthaven-assistant-webserver-macos.zip
+          files: frosthaven_assistant/build/macos/Build/Products/Release/frosthaven-assistant-webserver-macos.zip
