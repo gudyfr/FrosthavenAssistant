@@ -57,7 +57,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: $RUNNER_TEMP/release.keystore
+          fileName: release.keystore
           encodedString: ${{ secrets.SECRET_KEYSTORE_B64 }}
       - uses: subosito/flutter-action@v1
         with:
@@ -73,7 +73,7 @@ jobs:
       - name: Generate App Bundle
         run: flutter build appbundle --release  
       - name: Sign Android App Bundle
-        run: jarsigner -keystore $RUNNER_TEMP/release.keystore -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
+        run: jarsigner -keystore ../release.keystore -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
