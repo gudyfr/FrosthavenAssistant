@@ -105,7 +105,7 @@ jobs:
       - name: Build artifacts
         run: flutter build windows --release
       - name: copy ffmpeg
-        run: cp 'release material/ffmpeg.exe' 'frosthaven_assistant/build/windows/runner/Release/'
+        run: cp '../release material/ffmpeg.exe' 'frosthaven_assistant/build/windows/runner/Release/'
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
