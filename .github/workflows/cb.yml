@@ -2,9 +2,8 @@ name: Flutter CI
 
 on: 
   push:
-    tags:
-      - "v.*.*.*_*_web"
-
+    branches: webserver
+    tags: 'v.*.*.*_*_web'
 
 defaults:
   run:
@@ -46,6 +45,41 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
           files: frosthaven_assistant/build/linux/x64/release/bundle/frosthaven-assistant-webserver-linux.zip
+          
+  build-and-release-android:
+    runs-on: ubuntu-latest
+            
+    steps:
+      - uses: actions/checkout@v2      
+        with :
+          ref: 'webserver'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+          flutter-version: '3.7.12'
+          cache: true
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Generate intermediates
+        run: flutter build apk --release  
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: frosthaven-assistant-webserver-android.zip
+          directory: frosthaven_assistant/build/app/outputs/apk/release/
+          path: app-release.apk
+      - name: Android Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+        with:
+          files: frosthaven_assistant/build/app/outputs/apk/release/frosthaven-assistant-webserver-android.zip
 
   build-and-release-windows:
     runs-on: windows-latest
@@ -74,7 +108,7 @@ jobs:
         uses: chpoit/js-copy-github-action@master
         with:
           source: "release material/ffmpeg.exe"
-          target: "frosthaven_assistant/build/windows/runner/Release/ffmpeg.exe"
+          target: "frosthaven_assistant/build/windows/runner/Release/"
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
@@ -142,4 +176,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          files: frosthaven-assistant-webserver-macos.zip
+          files: frosthaven_assistant/build/macos/Build/Products/Release/frosthaven-assistant-webserver-macos.zip
