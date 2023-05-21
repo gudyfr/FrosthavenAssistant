@@ -90,26 +90,78 @@ convertCard(MonsterAbilityCardModel model) {
 }
 
 convertScenario(ScenarioModel model) {
-  var output = <String,dynamic>{};
+  var output = <String, dynamic>{};
+  output['name'] = model.name;
   output['monsters'] = model.monsters;
   if (model.lootDeck != null) {
     output['loot'] = convertLootDeck(model.lootDeck!);
+  }
+  output['specials'] = convertSpecials(model.specialRules);
+  if(model.sections.isNotEmpty) {
+    output['sections'] =
+        {for (var s in model.sections.map((e) => convertScenario(e))) s['name'] : s};
   }
   return output;
 }
 
 convertLootDeck(LootDeckModel model) {
-  return [model.arrowvine, model.axenut, model.coin, model.corpsecap, model.flamefruit, model.hide, model.lumber, model.metal, model.rockroot, model.snowthistle, model.treasure];
+  return [
+    model.arrowvine,
+    model.axenut,
+    model.coin,
+    model.corpsecap,
+    model.flamefruit,
+    model.hide,
+    model.lumber,
+    model.metal,
+    model.rockroot,
+    model.snowthistle,
+    model.treasure
+  ];
 }
 
+convertSpecials(List<SpecialRule> l) {
+  return l.map((e) => convertSpecial(e)).toList();
+}
+
+convertSpecial(SpecialRule e) {
+  var output = <String, dynamic>{};
+  output['type'] = e.type;
+
+  if(e.list.isNotEmpty) {
+    output['list'] = e.list;
+  }
+
+  if(e.type == "levelAdjust") {
+    output['level'] = e.level;
+  }
+
+  if (e.condition != "") {
+    output['condition'] = e.condition;
+  }
+
+  if (e.name != "") {
+    output['name'] = e.name;
+  }
+
+  if (e.health != "") {
+    output['hp'] = e.health.toString();
+  }
+
+  output['startOfRound'] = e.startOfRound;
+  if (e.note != "") {
+    output['note'] = e.note;
+  }
+
+  return output;
+}
 
 convertCharacter(CharacterClass e) {
-  var output = <String,dynamic>{};
+  var output = <String, dynamic>{};
   output['name'] = e.name;
   output['hps'] = e.healthByLevel;
   output['summons'] = e.summons.map((e) => convertSummon(e)).toList();
   return output;
-
 }
 
 convertSummon(SummonModel e) {
