@@ -1,6 +1,9 @@
 name: Flutter CI
 
-on: workflow_dispatch
+on: 
+  push:
+    branches: webserver
+    tags: 'v.*.*.*_*_web'
 
 defaults:
   run:
