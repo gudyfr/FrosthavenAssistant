@@ -55,7 +55,7 @@ convertMonsterLevelModel(MonsterLevelModel model) {
 
 convertMonsterStatsModel(MonsterStatsModel model) {
   var output = <String,dynamic>{};
-  output['hp'] = model.health;
+  output['hp'] = model.health.toString().replaceAll("x", "*");
   if (model.immunities.isNotEmpty) {
     output['immunities'] =
         model.immunities.map((e) => e.replaceAll("%", "")).toList();
@@ -145,7 +145,7 @@ convertSpecial(SpecialRule e) {
   }
 
   if (e.health != "") {
-    output['hp'] = e.health.toString();
+    output['hp'] = e.health.toString().replaceAll("x", "*");
   }
 
   output['startOfRound'] = e.startOfRound;
