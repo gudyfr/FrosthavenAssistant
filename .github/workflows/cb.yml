@@ -37,7 +37,7 @@ jobs:
           directory: frosthaven_assistant/build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+#         if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
@@ -79,13 +79,14 @@ jobs:
           directory: frosthaven_assistant/build/windows/runner/Release
       - name: Windows Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+#         if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
           files: frosthaven_assistant/build/windows/runner/Release/frosthaven-assistant-webserver-windows.zip
 
   build-and-release-macos:
+    if: ${{ false }}
     runs-on: macos-latest
 
     steps:
