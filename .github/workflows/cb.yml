@@ -80,7 +80,7 @@ jobs:
         with:
           type: 'zip'
           filename: frosthaven-assistant-webserver-android.zip
-          directory:  build/app/outputs/bundle/release/
+          directory:  frosthaven_assistant/build/app/outputs/bundle/release/
           path: app-release-signed.aab
       - name: Android Release
         uses: softprops/action-gh-release@v1
