@@ -88,7 +88,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          files: frosthaven_assistant/build/app/outputs/apk/release/frosthaven-assistant-webserver-android.zip
+          files: frosthaven_assistant/build/app/outputs/bundle/release/frosthaven-assistant-webserver-android.zip
 
   build-and-release-windows:
     runs-on: windows-latest
