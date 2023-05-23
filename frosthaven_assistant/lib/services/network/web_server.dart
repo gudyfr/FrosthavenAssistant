@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_character_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_condition_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_standee_command.dart';
@@ -465,11 +466,13 @@ class WebServer {
     Map<String, Map<String, int>> charactersLoot = {};
     var characters = GameMethods.getCurrentCharacters();
     for (var character in characters) {
+      debugPrint(character.characterClass.name);
       charactersLoot[character.characterClass.name] = {};
     }
     for (var card in _gameState.lootDeck.discardPile.getList()) {
       var owner = card.owner;
-      if (owner != null) {
+      debugPrint(owner);
+      if (owner != null && owner != "") {
         var characterLoot = charactersLoot[owner]!;
         var itemName = card.gfx;
         int value = 0;
