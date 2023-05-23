@@ -1309,8 +1309,8 @@
     {
       "1": {
         "Cave Bear (Circles special)": {
-          "normal": [1, 1, 1],
-          "elite": [0, 0, 0]
+          "normal": [0, 0, 0],
+          "elite": [1, 1, 1]
         }
       }
     },
@@ -1504,7 +1504,7 @@
           "normal": [2, 2, 2],
           "elite": [0, 0, 0]
         },
-        "Steel Automaton": {
+        "Ruined Machine": {
           "normal": [2, 2, 2],
           "elite": [1, 1, 1]
         }
@@ -1691,7 +1691,7 @@
           "elite": [1, 1, 1]
         },
         "Robotic Boltshooter": {
-          "normal": [1, 1, 1],
+          "normal": [2, 2, 2],
           "elite": [0, 0, 0]
         }
       }},
@@ -2076,8 +2076,8 @@
           "elite": [0, 0, 0]
         },
         "Lightning Eel": {
-          "normal": [4, 4, 4],
-          "elite": [0, 0, 0]
+          "normal": [0, 0, 0],
+          "elite": [4, 4, 4]
         }
       }
     },

@@ -3,30 +3,16 @@
     {
       "13 A": {
         "Hound Scenario 0": {
-          "normal": [
-            2,
-            1,
-            4
-          ],
-          "elite": [
-            0,
-            2,
-            0
-          ]
+          "normal": [2, 1, 4],
+          "elite": [0, 2, 0]
         }
-      }},{
+      }
+    },
+    {
       "2.1": {
         "Hound Scenario 0": {
-          "normal": [
-            2,
-            3,
-            3
-          ],
-          "elite": [
-            1,
-            1,
-            3
-          ]
+          "normal": [2, 3, 3],
+          "elite": [1, 1, 3]
         }
       }
     }
@@ -50,7 +36,9 @@
           "normal": [1, 1, 1],
           "elite": [0, 0, 0]
         }
-      }},{
+      }
+    },
+    {
       "5.3": {
         "Algox Archer": {
           "normal": [0, 2, 2],
@@ -82,7 +70,21 @@
           "normal": [0, 2, 1],
           "elite": [1, 1, 2]
         }
-      }},{
+      }
+    },
+    {
+      "6.1": {
+        "Algox Guard": {
+          "normal": [1, 1, 0],
+          "elite": [0, 0, 1]
+        },
+        "Algox Scout": {
+          "normal": [1, 3, 2],
+          "elite": [1, 1, 2]
+        }
+      }
+    },
+    {
       "27.1": {
         "Algox Archer": {
           "normal": [1, 0, 1],
@@ -141,28 +143,16 @@
     {
       "16 B": {
         "Algox Guard": {
-          "normal": [2, 0,
-            2
-          ],
-          "elite": [
-            1,
-            3,
-            3
-          ]
+          "normal": [2, 0, 2],
+          "elite": [1, 3, 3]
         },
         "Algox Scout": {
-          "normal": [
-            2,
-            4,
-            2
-          ],
-          "elite": [
-            0,
-            0,
-            2
-          ]
+          "normal": [2, 4, 2],
+          "elite": [0, 0, 2]
         }
-      }},{
+      }
+    },
+    {
       "75.1": {
         "Frozen Fist": {
           "normal": [1, 1, 1],
@@ -179,30 +169,16 @@
     {
       "16 B": {
         "Algox Archer": {
-          "normal": [
-            0,
-            1,
-            2
-          ],
-          "elite": [
-            1,
-            1,
-            1
-          ]
+          "normal": [0, 1, 2],
+          "elite": [1, 1, 1]
         },
         "Algox Guard": {
-          "normal": [
-            2,
-            1,
-            0
-          ],
-          "elite": [
-            0,
-            1,
-            2
-          ]
+          "normal": [2, 1, 0],
+          "elite": [0, 1, 2]
         }
-      }},{
+      }
+    },
+    {
       "75.1": {
         "Frozen Fist": {
           "normal": [1, 1, 1],
@@ -226,8 +202,8 @@
     {
       "7.2": {
         "Frozen Corpse": {
-          "normal": [1, 0, 0],
-          "elite": [0, 1, 1]
+          "normal": [2, 2, 0],
+          "elite": [1, 2, 4]
         }
       }
     },
@@ -259,33 +235,21 @@
           "normal": [0, 1, 2],
           "elite": [1, 1, 1]
         }
-      }},{
+      }
+    },
+    {
       "12.2": {
         "Frost Demon (FH)": {
-          "normal": [
-            0,
-            2,
-            4
-          ],
-          "elite": [
-            0,
-            0,
-            0
-          ]
+          "normal": [0, 2, 4],
+          "elite": [0, 0, 0]
         },
         "Snow Imp": {
-          "normal": [
-            0,
-            0,
-            0
-          ],
-          "elite": [
-            3,
-            3,
-            3
-          ]
+          "normal": [0, 0, 0],
+          "elite": [3, 3, 3]
         }
-      }},{
+      }
+    },
+    {
       "22.2": {
         "Frost Demon (FH)": {
           "normal": [2, 1, 0],
@@ -322,7 +286,7 @@
       }},{
       "48.4": {
         "Coral Corpse": {
-          "normal": [1, 1,1],
+          "normal": [1, 1, 1],
           "elite": [0, 0, 0]
         }
       }
@@ -342,18 +306,12 @@
       }},{
       "12.1": {
         "Polar Bear": {
-          "normal": [
-            1,
-            0,
-            0
-          ],
-          "elite": [
-            0,
-            1,
-            1
-          ]
+          "normal": [1, 0, 0],
+          "elite": [0, 1, 1]
         }
-      }},{
+      }
+    },
+    {
       "21.1": {
         "Polar Bear": {
           "normal": [2, 1, 0],
@@ -548,7 +506,7 @@
           "elite": [1, 1, 2]
         },
         "Wind Demon (FH)": {
-          "normal": [2, 2, 2],
+          "normal": [2, 3, 2],
           "elite": [0, 0, 1]
         }
       }
@@ -621,16 +579,28 @@
   ],
   "17": [
     {
-      "start": {}},{
+      "start": {}
+    },
+    {
       "17.3": {
         "Living Spirit (FH)": {
           "normal": [0, 1, 2],
+          "elite": [0, 0, 0]
+        },
+        "Living Doom": {
+          "normal": [0, 0, 0],
           "elite": [1, 1, 1]
         }
-      }},{
+      }
+    },
+    {
       "19.3": {}},{
-      "25.3": {}},{
+      "25.3": {}},
+    {
       "42.3": {}
+    },
+    {
+      "62.3": {}
     }
   ],
   "16": [
@@ -644,7 +614,12 @@
           "normal": [2, 2, 2],
           "elite": [1, 2, 3]
         }
-      }},{
+      }
+    },
+    {
+      "15.3": {}
+    },
+    {
       "27.2": {
         "Ancient Artillery (FH)": {
           "normal": [0, 1, 0],
@@ -794,7 +769,7 @@
       "start": {
         "Living Spirit (FH)": {
           "normal": [2, 1, 1],
-          "elite": [0, 1, 2]
+          "elite": [0, 1, 1]
         },
         "Frost Demon (FH)": {
           "normal": [2, 3, 2],
@@ -837,10 +812,15 @@
           "elite": [0, 1, 2]
         },
         "Lurker Wavethrower": {
-          "normal": [2, 2, 2],
-          "elite": [1, 2, 4]
+          "normal": [2, 2, 4],
+          "elite": [1, 2, 2]
         }
-      }},{
+      }
+    },
+    {
+      "26.3": {}
+    },
+    {
       "41.2": {
         "Lightning Eel": {
           "normal": [4, 2, 0],
@@ -899,7 +879,7 @@
           "elite": [1, 1, 2]
         },
         "Chaos Demon (FH)": {
-          "normal": [1, 1, 1],
+          "normal": [0, 1, 2],
           "elite": [1, 1, 1]
         }
       }},{
@@ -1009,7 +989,7 @@
           "elite": [1, 1, 1]
         }
       }},{
-      "66.3": {
+      "68.3": {
         "Deep Terror (FH)": {
           "normal": [1, 0, 0],
           "elite": [0, 1, 1]
@@ -1202,7 +1182,7 @@
           "normal": [0, 1, 0],
           "elite": [1, 1, 2]
         },
-        "Steel Automaton": {
+        "Robotic Boltshooter": {
           "normal": [1, 0, 0],
           "elite": [0, 1, 1]
         }
@@ -1410,6 +1390,14 @@
         "Ruined Machine": {
           "normal": [0, 1, 2],
           "elite": [1, 1, 1]
+        }
+      }
+    },
+    {
+      "144.1": {
+        "Living Bones (FH)": {
+          "normal": [2, 2, 2],
+          "elite": [1, 2, 3]
         }
       }
     },
@@ -1662,8 +1650,8 @@
     {
       "spawn 1": {
         "Living Spirit (FH)": {
-          "normal": [1, 0, 0],
-          "elite": [0, 1, 1]
+          "normal": [1, 1, 0],
+          "elite": [0, 0, 1]
         }
       }
     },
@@ -1695,7 +1683,21 @@
           "normal": [2, 1, 2],
           "elite": [0, 1, 1]
         }
-      }},{
+      }
+    },
+    {
+      "63.3": {
+        "Deep Terror (FH)": {
+          "normal": [2, 2, 2],
+          "elite": [0, 1, 2]
+        },
+        "Night Demon (FH)": {
+          "normal": [2, 1, 0],
+          "elite": [0, 1, 2]
+        }
+      }
+    },
+    {
       "103.3": {
         "Night Demon (FH)": {
           "normal": [2, 3, 3],
@@ -1776,7 +1778,7 @@
           "elite": [0, 0, 1]
         }
       }},{
-      "52.2": {
+      "52.1": {
         "Ancient Artillery (FH)": {
           "normal": [2, 1, 0],
           "elite": [0, 1, 2]
@@ -2163,6 +2165,18 @@
           "elite": [0, 0, 1]
         }
       }
+    },
+    {
+      "spawn 1": {
+        "Ruined Machine": {
+          "normal": [2, 2, 0],
+          "elite": [0, 0, 2]
+        },
+        "Steel Automaton": {
+          "normal": [1, 0, 0],
+          "elite": [0, 1, 1]
+        }
+      }
     }
   ],
   "52": [
@@ -2279,9 +2293,10 @@
           "normal": [1, 1, 0],
           "elite": [0, 0, 1]
         }
-      }},{
-      "80.2": {
       }
+    },
+    {
+      "80.2": {}
     }
   ],
   "56": [
@@ -2417,7 +2432,7 @@
           "elite": [0, 0, 0]
         },
         "Lightning Eel": {
-          "normal": [1, 1, 0],
+          "normal": [2, 1, 0],
           "elite": [0, 1, 2]
         },
         "Lurker Clawcrusher": {
@@ -2499,6 +2514,12 @@
           "elite": [0, 1, 1]
         }
       }
+    },
+    {
+      "5.4": {}
+    },
+    {
+      "18.3": {}
     }
   ],
   "63": [
@@ -2590,13 +2611,9 @@
   "64": [
     {
       "start": {
-        "City Guard (FH)": {
+        "Guard Captain": {
           "normal": [0, 0, 0],
           "elite": [4, 4, 4]
-        },
-        "Living Doom": {
-          "normal": [2, 3, 4],
-          "elite": [0, 0, 0]
         }
       }},
     {
@@ -2797,7 +2814,7 @@
           "elite": [0, 0, 0]
         },
         "Wind Demon (FH)": {
-          "normal": [1, 1, 0],
+          "normal": [2, 2, 1],
           "elite": [0, 0, 1]
         }
       }
@@ -3051,8 +3068,8 @@
           "elite": [0, 0, 1]
         },
         "Piranha Pig": {
-          "normal": [2, 0, 0],
-          "elite": [0, 2, 2]
+          "normal": [2, 2, 0],
+          "elite": [0, 0, 2]
         }
       }
     }
@@ -3108,7 +3125,13 @@
           "normal": [4, 4, 4],
           "elite": [0, 1, 2]
         }
-      }},{
+      }
+    },
+    {
+      "41.4": {
+      }
+    },
+    {
       "28.3": {
         "Abael Herder": {
           "normal": [1, 1, 0],
@@ -3280,8 +3303,16 @@
           "elite": [0, 1, 1]
         },
         "Piranha Pig": {
-          "normal": [2, 3, 1],
-          "elite": [0, 0, 2]
+          "normal": [1, 2, 1],
+          "elite": [0, 0, 1]
+        }
+      }
+    },
+    {
+      "spawn 1": {
+        "Chaos Demon (FH)": {
+          "normal": [2, 1, 0],
+          "elite": [0, 1, 2]
         }
       }
     },
@@ -3307,7 +3338,7 @@
         },
         "Algox Archer": {
           "normal": [1, 0, 0],
-          "elite": [0, 2, 1]
+          "elite": [0, 1, 1]
         },
         "Algox Guard": {
           "normal": [1, 1, 2],
@@ -3318,6 +3349,9 @@
           "elite": [1, 2, 2]
         }
       }
+    },
+    {
+      "56.2": {}
     },
     {
       "105.4": {
@@ -3862,6 +3896,18 @@
       }
     },
     {
+      "6.3": {
+        "Earth Demon (FH)": {
+          "normal": [2, 1, 0],
+          "elite": [0, 1, 2]
+        },
+        "Ice Wraith": {
+          "normal": [1, 1, 1],
+          "elite": [0, 0, 1]
+        }
+      }
+    },
+    {
       "181.4": {
         "Lady in White": {
           "normal": [1, 1, 1],
@@ -3895,7 +3941,7 @@
       }},{
       "73.1": {
         "Brother": {
-          "normal": [2, 0, 0],
+          "normal": [2, 2, 2],
           "elite": [0, 0, 0]
         },
         "Algox Archer": {
@@ -4360,7 +4406,9 @@
           "normal": [1, 1, 0],
           "elite": [0, 0, 1]
         }
-      }},{
+      }
+    },
+    {
       "18.1": {
         "Ancient Artillery (FH)": {
           "normal": [3, 3, 4],
@@ -4370,11 +4418,13 @@
           "normal": [5, 3, 2],
           "elite": [1, 3, 5]
         },
-        "Rending drake (FH)": {
+        "Rending Drake (FH)": {
           "normal": [1, 1, 2],
           "elite": [0, 1, 1]
         }
-      }},{
+      }
+    },
+    {
       "116.2": {
         "Ancient Artillery (FH)": {
           "normal": [2, 0, 1],
@@ -4384,7 +4434,7 @@
           "normal": [1, 1, 0],
           "elite": [0, 1, 2]
         },
-        "Rending drake (FH)": {
+        "Rending Drake (FH)": {
           "normal": [0, 2, 0],
           "elite": [1, 0, 2]
         }
@@ -4400,7 +4450,7 @@
           "normal": [0, 0, 0],
           "elite": [1, 2, 2]
         },
-        "Rending drake (FH)": {
+        "Rending Drake (FH)": {
           "normal": [1, 1, 1],
           "elite": [0, 0, 1]
         }
@@ -4771,13 +4821,17 @@
           "normal": [0, 0, 0],
           "elite": [5, 7, 10]
         }
-      }},{
+      }
+    },
+    {
       "103.1": {
         "Steel Automaton": {
           "normal": [0, 1, 0],
           "elite": [1, 1, 2]
         }
-      }},{
+      }
+    },
+    {
       "116.1": {
         "Living Bones (FH)": {
           "normal": [0, 2, 4],
@@ -4801,7 +4855,7 @@
           "normal": [2, 3, 4],
           "elite": [0, 0, 0]
         },
-        "Ruined Machine": {
+        "Robotic Boltshooter": {
           "normal": [2, 3, 4],
           "elite": [0, 0, 0]
         }
@@ -4959,8 +5013,12 @@
     {
       "186.3": {
         "Living Spirit (FH)": {
-          "normal": [2, 3, 0],
-          "elite": [0, 0, 2]
+          "normal": [1, 2, 0],
+          "elite": [0, 0, 1]
+        },
+        "Living Doom": {
+          "normal": [1, 1, 0],
+          "elite": [0, 0, 1]
         }
       }
     },
@@ -5001,7 +5059,7 @@
           "elite": [0, 0, 0]
         },
         "Hound (FH)": {
-          "normal": [1, 2, 1],
+          "normal": [1, 2, 2],
           "elite": [1, 1, 2]
         }
       }
@@ -5179,7 +5237,7 @@
     {
       "start": {
         "Algox Guard": {
-          "normal": [1, 2, 3],
+          "normal": [2, 2, 3],
           "elite": [0, 0, 0]
         },
         "Algox Snowspeaker": {
@@ -5195,7 +5253,7 @@
     {
       "spawn 1": {
         "Algox Guard": {
-          "normal": [2, 2, 0],
+          "normal": [4, 2, 0],
           "elite": [0, 2, 4]
         }
       }
@@ -5266,16 +5324,16 @@
           "normal": [2, 2, 4],
           "elite": [2, 2, 2]
         },
-        "Polar Bear": {
+        "Polar Bear 117": {
           "normal": [2, 1, 0],
           "elite": [3, 4, 5]
         },
         "Vermling Priest": {
           "normal": [1, 2, 2],
-          "elite": [0, 0, 1]
+          "elite": [1, 1, 2]
         },
         "Vermling Scout (FH)": {
-          "normal": [2, 3, 4],
+          "normal": [4, 3, 4],
           "elite": [0, 2, 2]
         }
       }
@@ -5424,7 +5482,7 @@
           "elite": [1, 1, 3]
         },
         "Vermling Scout (FH)": {
-          "normal": [4, 6, 4],
+          "normal": [6, 6, 4],
           "elite": [0, 2, 4]
         }
       }
@@ -5449,8 +5507,8 @@
           "elite": [0, 1, 2]
         },
         "Vermling Scout (FH)": {
-          "normal": [2, 3, 4],
-          "elite": [0, 1, 2]
+          "normal": [0, 1, 2],
+          "elite": [1, 1, 1]
         }
       }},{
       "76.2": {
@@ -5687,7 +5745,7 @@
           "elite": [0, 1, 1]
         },
         "Ruined Machine": {
-          "normal": [1, 2, 2],
+          "normal": [2, 2, 2],
           "elite": [2, 3, 4]
         }
       }
@@ -5719,10 +5777,6 @@
   "126": [
     {
       "start": {
-        "Snow Imp": {
-          "normal": [2, 3, 2],
-          "elite": [0, 0, 1]
-        }
       }
     },
     {
@@ -5886,7 +5940,7 @@
   "129": [
     {
       "start": {
-        "City Guard": {
+        "City Guard (FH)": {
           "normal": [0, 0, 0],
           "elite": [4, 3, 2]
         }
