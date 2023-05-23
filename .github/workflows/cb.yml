@@ -57,7 +57,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: '$RUNNER_TEMP/release.keystore'
+          fileName: release.keystore
           encodedString: ${{ secrets.SECRET_KEYSTORE_B64 }}
       - uses: subosito/flutter-action@v1
         with:
@@ -73,14 +73,14 @@ jobs:
       - name: Generate App Bundle
         run: flutter build appbundle --release  
       - name: Sign Android App Bundle
-        run: jarsigner -keystore $RUNNER_TEMP/release.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEYSTORE_PASSWORD }} -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
+        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: frosthaven-assistant-webserver-android.zip
-          directory:  build/app/outputs/bundle/release/
+          directory:  frosthaven_assistant/build/app/outputs/bundle/release/
           path: app-release-signed.aab
       - name: Android Release
         uses: softprops/action-gh-release@v1
@@ -88,7 +88,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          files: frosthaven_assistant/build/app/outputs/apk/release/frosthaven-assistant-webserver-android.zip
+          files: frosthaven_assistant/build/app/outputs/bundle/release/frosthaven-assistant-webserver-android.zip
 
   build-and-release-windows:
     runs-on: windows-latest
