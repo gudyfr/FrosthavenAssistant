@@ -90,7 +90,7 @@ class Forteller {
           .replaceAll(" ",
           "%20")}(format=m3u8-aapl,encryption=cbc,type=audio)\" -v error -b:a 192k \"${out
           .path}\"";
-      if(Platform.isWindows) {
+      if(Platform.isWindows || Platform.isLinux) {
         var shell = Shell(stdout: stdout, commandVerbose: false);
         await shell.run("ffmpeg $cmd");
       } else {

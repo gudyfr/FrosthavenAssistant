@@ -21,6 +21,7 @@ import 'package:frosthaven_assistant/Resource/commands/remove_condition_command.
 import 'package:frosthaven_assistant/Resource/commands/remove_monster_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_character_level_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_init_command.dart';
+import 'package:frosthaven_assistant/Resource/commands/set_level_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_loot_owner_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_scenario_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/use_element_command.dart';
@@ -41,7 +42,7 @@ import '../service_locator.dart';
 import 'package:path/path.dart' as p;
 
 class WebServer {
-  static const int VERSION = 3;
+  static const int VERSION = 4;
   final GameState _gameState = getIt<GameState>();
 
   HttpServer? _server;
@@ -66,7 +67,8 @@ class WebServer {
       ..post('/setElement', _applySetElementHandler)
       ..post('/loot', _lootHandler)
       ..post('/setCurrentTurn', _setCurrentTurnHandler)
-      ..post('/endScenario', _endScenarioHandler);
+      ..post('/endScenario', _endScenarioHandler)
+      ..post('/setLevel', _setLevelHandler);
 
     _server = await shelf_io.serve(
       // See https://pub.dev/documentation/shelf/latest/shelf/logRequests.html
@@ -449,6 +451,14 @@ class WebServer {
       }
     }
     return Response.ok("");
+  }
+
+  Future<Response> _setLevelHandler(Request request) async {
+    var data = Uri.decodeFull(await request.readAsString());
+    Map<String, dynamic> info = jsonDecode(data);
+    int level = info["level"] ?? 0;
+    _gameState.action(SetLevelCommand(level, null));
+    return _getStateHandler(request);
   }
 
   Future<Response> _getLootHandler(Request request) async {
