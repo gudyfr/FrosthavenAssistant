@@ -26,6 +26,7 @@ void main() async {
   File("D:/fhtts/docs/gameData.json").writeAsString(json.encode(output));
   var encoder = JsonEncoder.withIndent("\t");
   File("D:/fhtts/gameData.human.json").writeAsString(encoder.convert(output));
+  debugPrint("Done !");
 }
 
 convertMonster(MonsterModel model) {
@@ -55,7 +56,12 @@ convertMonsterLevelModel(MonsterLevelModel model) {
 
 convertMonsterStatsModel(MonsterStatsModel model) {
   var output = <String,dynamic>{};
-  output['hp'] = model.health.toString().replaceAll("x", "*");
+  var hp = model.health.toString().replaceAll("x", "*");
+  if (hp.endsWith("d2")) {
+    hp = "floor(${hp.substring(0,hp.length-2)}/2)";
+  }
+  output['hp'] = hp;
+
   if (model.immunities.isNotEmpty) {
     output['immunities'] =
         model.immunities.map((e) => e.replaceAll("%", "")).toList();
@@ -145,12 +151,22 @@ convertSpecial(SpecialRule e) {
   }
 
   if (e.health != "") {
-    output['hp'] = e.health.toString().replaceAll("x", "*");
+    var hp = e.health.toString().replaceAll("x", "*");
+    if (hp.endsWith("d2")) {
+      hp = "floor(${hp.substring(0,hp.length-2)}/2)";
+    }
+    output['hp'] = hp;
   }
 
-  output['startOfRound'] = e.startOfRound;
+  if(e.type == "Timer") {
+    output['startOfRound'] = e.startOfRound;
+  }
+
   if (e.note != "") {
     output['note'] = e.note;
+  }
+  if(e.init != 99) {
+    output['init'] = e.init;
   }
 
   return output;
