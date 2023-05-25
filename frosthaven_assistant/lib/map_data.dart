@@ -13,16 +13,40 @@ import 'package:frosthaven_assistant/Model/summon.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final String response = await rootBundle
-      .loadString('assets/data/editions/Frosthaven.json', cache: false);
-  final data = await json.decode(response);
-  final model = CampaignModel.fromJson(data, const []);
-  final output = <String, dynamic>{};
 
-  output['monsters'] = { for (var e in model.monsters.values.map((e) => convertMonster(e))) e['internal'] : e } ;
-  output['decks'] = {for (var e in model.monsterAbilities.map((e) => convertDeck(e))) e['name'] : e};
-  output['scenarios'] = model.scenarios.map((k,v) => MapEntry(k, convertScenario(v)));
-  output['characters'] = {for (var e in model.characters.map((e) => convertCharacter(e))) e['name'] : e };
+  final output = <String, dynamic>{};
+  output['monsters'] = {};
+  output['decks'] = {};
+  output['scenarios'] = {};
+  output['characters'] = {};
+
+  var editions = {"Solo", "Frosthaven"};
+  for(var edition in editions) {
+    final String response = await rootBundle
+        .loadString('assets/data/editions/$edition.json', cache: false);
+    final data = await json.decode(response);
+    final model = CampaignModel.fromJson(data, const []);
+
+    output['monsters'].addAll({
+      for (var e in model.monsters.values.map((e) =>
+          convertMonster(e))) e['internal']: e
+    });
+
+    output['decks'].addAll({
+      for (var e in model.monsterAbilities.map((e) =>
+          convertDeck(e))) e['name']: e
+    });
+
+    output['scenarios'].addAll(
+        model.scenarios.map((k, v) => MapEntry(k, convertScenario(v))));
+
+    output['characters'].addAll({
+      for (var e in model.characters.map((e) =>
+          convertCharacter(e))) e['name']: e
+    });
+
+  }
+
   File("D:/fhtts/docs/gameData.json").writeAsString(json.encode(output));
   var encoder = JsonEncoder.withIndent("\t");
   File("D:/fhtts/gameData.human.json").writeAsString(encoder.convert(output));
