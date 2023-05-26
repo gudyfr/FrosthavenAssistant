@@ -55,7 +55,7 @@ void main() async {
       namesToUrls[entryMap["Name"]!] = entryMap["URL"]!;
     }
   }
-  if (false && await dir.exists()) {
+  if (await dir.exists()) {
     await for (final entity in dir.list()) {
       if ((await entity.stat()).type == FileSystemEntityType.file) {
         var content = await File(entity.path).readAsBytes();
@@ -79,8 +79,7 @@ void main() async {
         .writeAsString("{$output}", flush: true);
   }
 
-  getFileMappings(
-      p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
+  getFileMappings(p.join(documentsPath.path, "frosthaven", "statsCards"), namesToUrls);
   // getFileMappings("D:/fhtts/docs/images/initiativeTrackers", namesToUrls);
   // getFileMappings("D:/fhtts/docs/images/attackModifiers", namesToUrls);
 }

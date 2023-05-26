@@ -31,73 +31,79 @@ void main() {
     p.join(documentsPath.path, "frosthaven", "statsCards");
     await Directory(abilityCardsOutputFolder).create(recursive: true);
     await Directory(statsCardsOutputFolder).create(recursive: true);
-    var frosthavenModel = gameState.modelData.value['Frosthaven'];
-    if (frosthavenModel != null) {
-      var monsters = frosthavenModel.monsters;
-      var abilityCardsList = frosthavenModel.monsterAbilities;
-      Map<String, List<MonsterAbilityCardModel>> abilityCards = HashMap();
-      for (var deck in abilityCardsList) {
-        abilityCards[deck.name] = deck.cards;
-      }
-      for (var name in monsters.keys) {
-        print(name);
-        var monster = monsters[name];
-        if (monster != null) {
-          var monsterAbilityCards = abilityCards[monster.deck];
-          if (monsterAbilityCards != null) {
-            for (var level in monster.levels) {
-              var monsterInstance =
-              GameMethods.createMonster(monster.name, level.level, false);
-              if (monsterInstance != null) {
-                for (var monsterAbilityCard in monsterAbilityCards) {
-                  var outputPath = p.join(abilityCardsOutputFolder,
-                      "${monster.name}_${level.level}_${monsterAbilityCard.nr}.png");
+    var editions = ['Frosthaven', 'Solo'];
+    for(var edition in editions) {
+      var model = gameState.modelData.value[edition];
+      if (model != null) {
+        var monsters = model.monsters;
+        var abilityCardsList = model.monsterAbilities;
+        Map<String, List<MonsterAbilityCardModel>> abilityCards = HashMap();
+        for (var deck in abilityCardsList) {
+          abilityCards[deck.name] = deck.cards;
+        }
+        for (var name in monsters.keys) {
+          debugPrint(name);
+          var monster = monsters[name];
+          if (monster != null) {
+            var monsterAbilityCards = abilityCards[monster.deck];
+            if (monsterAbilityCards != null) {
+              for (var level in monster.levels) {
+                var monsterInstance =
+                GameMethods.createMonster(monster.name, level.level, false);
+                if (monsterInstance != null) {
+                  for (var monsterAbilityCard in monsterAbilityCards) {
+                    var outputPath = p.join(abilityCardsOutputFolder,
+                        "${monster.name}_${level.level}_${monsterAbilityCard
+                            .nr}.png");
+                    if (!await File(outputPath).exists()) {
+                      var content = await screenshotController
+                          .captureFromWidget(
+                          MonsterAbilityCardWidget.buildFront(
+                              monsterAbilityCard, monsterInstance, 1.0, true),
+                          pixelRatio: 4.0);
+
+                      File(outputPath).writeAsBytes(content);
+                    } else {
+                      debugPrint(
+                          "Skipping ${monster.name}_${level
+                              .level}_${monsterAbilityCard.nr}");
+                    }
+                  }
+
+                  // Stats Card
+                  var outputPath = p.join(statsCardsOutputFolder,
+                      "${monster.name}_${level.level}.png");
                   if (!await File(outputPath).exists()) {
                     var content = await screenshotController.captureFromWidget(
-                        MonsterAbilityCardWidget.buildFront(
-                            monsterAbilityCard, monsterInstance, 1.0, true),
-                        pixelRatio: 4.0);
+                        MonsterStatCardWidget(data: monsterInstance),
+                        pixelRatio: 2.0);
 
                     File(outputPath).writeAsBytes(content);
                   } else {
-                    print(
-                        "Skipping ${monster.name}_${level
-                            .level}_${monsterAbilityCard.nr}");
+                    debugPrint("Skipping ${monster.name}_${level.level}");
                   }
-                }
 
-                // Stats Card
-                var outputPath = p.join(statsCardsOutputFolder,
-                    "${monster.name}_${level.level}.png");
-                if (!await File(outputPath).exists()) {
-                  var content = await screenshotController.captureFromWidget(
-                      MonsterStatCardWidget(data: monsterInstance),
-                      pixelRatio: 2.0);
+                  // Monster image
+                  outputPath =
+                      p.join(statsCardsOutputFolder, "${monster.name}.png");
+                  if (!await File(outputPath).exists()) {
+                    var content = await screenshotController.captureFromWidget(
+                        buildImagePart(monsterInstance, 120, 2.0, false),
+                        pixelRatio: 2.0);
 
-                  File(outputPath).writeAsBytes(content);
-                } else {
-                  print("Skipping ${monster.name}_${level.level}");
-                }
+                    File(outputPath).writeAsBytes(content);
+                  }
 
-                // Monster image
-                outputPath =
-                    p.join(statsCardsOutputFolder, "${monster.name}.png");
-                if (!await File(outputPath).exists()) {
-                  var content = await screenshotController.captureFromWidget(
-                      buildImagePart(monsterInstance, 120, 2.0, false),
-                      pixelRatio: 2.0);
+                  outputPath =
+                      p.join(
+                          statsCardsOutputFolder, "${monster.name}.grey.png");
+                  if (!await File(outputPath).exists()) {
+                    var content = await screenshotController.captureFromWidget(
+                        buildImagePart(monsterInstance, 120, 2.0, true),
+                        pixelRatio: 2.0);
 
-                  File(outputPath).writeAsBytes(content);
-                }
-
-                outputPath =
-                    p.join(statsCardsOutputFolder, "${monster.name}.grey.png");
-                if (!await File(outputPath).exists()) {
-                  var content = await screenshotController.captureFromWidget(
-                      buildImagePart(monsterInstance, 120, 2.0, true),
-                      pixelRatio: 2.0);
-
-                  File(outputPath).writeAsBytes(content);
+                    File(outputPath).writeAsBytes(content);
+                  }
                 }
               }
             }
