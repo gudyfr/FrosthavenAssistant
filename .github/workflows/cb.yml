@@ -73,7 +73,7 @@ jobs:
       - name: Generate Apk
         run: flutter build apk --release  
       - name: Sign Android Apk
-        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.apk build/app/outputs/apk/release/*.apk ${{ secrets.KEY_ALIAS }}
+        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/apk/release/app-release-signed.apk build/app/outputs/apk/release/*.apk ${{ secrets.KEY_ALIAS }}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
@@ -88,7 +88,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          files: frosthaven_assistant/build/app/outputs/bundle/release/frosthaven-assistant-webserver-android.zip
+          files: frosthaven_assistant/build/app/outputs/apk/release/frosthaven-assistant-webserver-android.zip
 
   build-and-release-windows:
     runs-on: windows-latest
