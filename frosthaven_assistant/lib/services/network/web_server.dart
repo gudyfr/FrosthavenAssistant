@@ -9,6 +9,7 @@ import 'package:frosthaven_assistant/Resource/commands/add_character_command.dar
 import 'package:frosthaven_assistant/Resource/commands/add_condition_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_standee_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/change_stat_commands/change_health_command.dart';
+import 'package:frosthaven_assistant/Resource/commands/change_stat_commands/change_max_health_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/change_stat_commands/change_xp_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/draw_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/draw_loot_card_command.dart';
@@ -20,6 +21,7 @@ import 'package:frosthaven_assistant/Resource/commands/next_turn_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/remove_character_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/remove_condition_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/remove_monster_command.dart';
+import 'package:frosthaven_assistant/Resource/commands/reorder_list_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_character_level_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_init_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/set_level_command.dart';
@@ -43,7 +45,7 @@ import '../service_locator.dart';
 import 'package:path/path.dart' as p;
 
 class WebServer {
-  static const int VERSION = 4;
+  static const int VERSION = 5;
   final GameState _gameState = getIt<GameState>();
 
   HttpServer? _server;
@@ -69,7 +71,9 @@ class WebServer {
       ..post('/loot', _lootHandler)
       ..post('/setCurrentTurn', _setCurrentTurnHandler)
       ..post('/endScenario', _endScenarioHandler)
-      ..post('/setLevel', _setLevelHandler);
+      ..post('/setLevel', _setLevelHandler)
+      ..post('/addSummon', _addSummonHandler)
+      ..post('/changeInitiative', _changeInitiativeHandler);
 
     _server = await shelf_io.serve(
       // See https://pub.dev/documentation/shelf/latest/shelf/logRequests.html
@@ -309,6 +313,9 @@ class WebServer {
       if (what == "hp" || what == "health") {
         _gameState
             .action(ChangeHealthCommand(change, target.id, target.ownerId));
+      } else  if (what == "maxHp") {
+        _gameState
+            .action(ChangeMaxHealthCommand(change, target.id, target.ownerId));
       } else if (what == "xp") {
         _gameState.action(ChangeXPCommand(change, target.id, target.ownerId));
       } else if (what == "level") {
@@ -500,6 +507,59 @@ class WebServer {
     return Response.ok(
         '{"loot" : {$output}, "baseXp":${GameMethods.getXPValue()}, "coinValue" : ${GameMethods.getCoinValue()}}',
         headers: {"Content-Type": "application/json"});
+  }
+
+  Future<Response> _addSummonHandler(Request request) async {
+    var data = Uri.decodeFull(await request.readAsString());
+    Map<String, dynamic> info = jsonDecode(data);
+    var name = info["name"] as String?;
+    if (name != null) {
+      for (var item in _gameState.currentList) {
+        if (item is Character) {
+          for (var summon in item.characterClass.summons) {
+            var summonName = summon.name;
+            if (summonName == name) {
+              _gameState.action(AddStandeeCommand(
+                  0,
+                  SummonData(0, summon.name, summon.health, summon.move,
+                      summon.attack, summon.range, summon.gfx),
+                  item.id,
+                  MonsterType.summon,
+                  true));
+            } else if (name.startsWith(summonName)) {
+              var nr = int.parse(name.substring(name.length - 1));
+              _gameState.action(AddStandeeCommand(
+                  nr,
+                  SummonData(nr, summon.name, summon.health, summon.move,
+                      summon.attack, summon.range, summon.gfx),
+                  item.id,
+                  MonsterType.summon,
+                  true));
+            }
+          }
+        }
+      }
+    }
+    return _getStateHandler(request);
+  }
+
+  Future<Response> _changeInitiativeHandler(Request request) async {
+    var data = Uri.decodeFull(await request.readAsString());
+    Map<String, dynamic> info = jsonDecode(data);
+    var name = info["name"] as String?;
+    var direction = info["direction"] as int?;
+    if (name != null && direction != null) {
+      for (var item in _gameState.currentList) {
+        if (item is Character) {
+          if (item.characterClass.name == name) {
+            var index = _gameState.currentList.indexOf(item);
+            _gameState.action(ReorderListCommand(index, index + direction));
+          }
+        }
+      }
+    }
+    _gameState.updateAllUI();
+    return _getStateHandler(request);
   }
 
   Future<Response> _endScenarioHandler(Request request) async {

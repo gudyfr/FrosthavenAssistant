@@ -187,7 +187,11 @@ convertSpecial(SpecialRule e) {
   }
 
   if (e.note != "") {
-    output['note'] = e.note;
+    if(e.notes.isNotEmpty) {
+      output['notes'] = e.notes.toList();
+    } else {
+      output['note'] = e.note;
+    }
   }
   if(e.init != 99) {
     output['init'] = e.init;

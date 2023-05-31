@@ -54,11 +54,12 @@ class SpecialRule {
   final int level;
   final int init;
   final String note;
+  final List<dynamic> notes;
   final List<dynamic> list;
   final bool startOfRound;
   final dynamic condition;
 
-  const SpecialRule(this.type, this.name, this.health, this.level, this.init, this.note, this.list, this.startOfRound, this.condition);
+  const SpecialRule(this.type, this.name, this.health, this.level, this.init, this.note, this.notes, this.list, this.startOfRound, this.condition);
 
   factory SpecialRule.fromJson(Map<String, dynamic> data) {
     final String type = data['type']; //required
@@ -86,6 +87,10 @@ class SpecialRule {
     if(data.containsKey('note')) {
       note = data['note'];
     }
+    List<dynamic> notes = [];
+    if(data.containsKey('notes')) {
+      notes = data['notes'];
+    }
     bool startOfRound = true;
     if(data.containsKey('startOfRound')) {
       startOfRound = data['startOfRound'];
@@ -94,7 +99,7 @@ class SpecialRule {
     if(data.containsKey('list')) {
       aList = data['list'];
     }
-    return SpecialRule(type,name,health, level, init, note, aList, startOfRound, condition);
+    return SpecialRule(type,name,health, level, init, note, notes, aList, startOfRound, condition);
   }
 
   //is this used at all?
@@ -103,6 +108,7 @@ class SpecialRule {
     return '{'
         '"type": "$type", '
         '"note": "$note", '
+        '"notes": ${jsonEncode(notes)}, '
         '"name": "$name", '
         '"health": "$health", '
         '"condition": "$condition", '
