@@ -70,10 +70,10 @@ jobs:
           java-version: '11'
       - name: Install project dependencies
         run: flutter pub get
-      - name: Generate App Bundle
-        run: flutter build appbundle --release  
-      - name: Sign Android App Bundle
-        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.aab build/app/outputs/bundle/release/*.aab ${{ secrets.KEY_ALIAS }}
+      - name: Generate Apk
+        run: flutter build apk --release  
+      - name: Sign Android Apk
+        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/bundle/release/app-release-signed.apk build/app/outputs/bundle/release/*.apk ${{ secrets.KEY_ALIAS }}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
@@ -81,7 +81,7 @@ jobs:
           type: 'zip'
           filename: frosthaven-assistant-webserver-android.zip
           directory:  frosthaven_assistant/build/app/outputs/bundle/release/
-          path: app-release-signed.aab
+          path: app-release-signed.apk
       - name: Android Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
