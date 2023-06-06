@@ -46,6 +46,7 @@ class MonsterInstance extends FigureState {
   int roundSummoned = -1;
 
   void setLevel(Monster monster) {
+    var damage = maxHealth.value - health.value;
     dynamic newHealthValue = 10; //need to put something outer than 0 or the standee will die immediately causing glitch
     MonsterStatsModel? monsterStatsModel;
     switch(type) {
@@ -99,7 +100,7 @@ class MonsterInstance extends FigureState {
     }
     //maxHealth.value = StatCalculator.calculateFormula(newHealthValue)!;
     level.value = monster.level.value;
-    health.value = maxHealth.value;
+    health.value = maxHealth.value - damage;
   }
 
   @override
