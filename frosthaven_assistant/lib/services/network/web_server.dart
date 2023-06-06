@@ -465,7 +465,9 @@ class WebServer {
     var data = Uri.decodeFull(await request.readAsString());
     Map<String, dynamic> info = jsonDecode(data);
     int level = info["level"] ?? 0;
-    _gameState.action(SetLevelCommand(level, null));
+    if(_gameState.level.value != level) {
+      _gameState.action(SetLevelCommand(level, null));
+    }
     return _getStateHandler(request);
   }
 
