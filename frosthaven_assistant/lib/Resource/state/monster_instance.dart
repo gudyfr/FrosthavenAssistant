@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:frosthaven_assistant/Model/monster.dart';
 
 import '../../services/service_locator.dart';
@@ -100,7 +102,7 @@ class MonsterInstance extends FigureState {
     }
     //maxHealth.value = StatCalculator.calculateFormula(newHealthValue)!;
     level.value = monster.level.value;
-    health.value = maxHealth.value - damage;
+    health.value = max(1, maxHealth.value - damage);
   }
 
   @override
