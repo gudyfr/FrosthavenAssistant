@@ -45,7 +45,7 @@ import '../service_locator.dart';
 import 'package:path/path.dart' as p;
 
 class WebServer {
-  static const int VERSION = 5;
+  static const int VERSION = 6;
   final GameState _gameState = getIt<GameState>();
 
   HttpServer? _server;
@@ -63,6 +63,7 @@ class WebServer {
       ..post('/addCharacter', _addCharacterHandler)
       ..post('/removeCharacter', _removeCharacterHandler)
       ..post('/switchMonster', _switchMonsterTypeHandler)
+      ..post('/updateStandeeNr', _updateStandeeNrHandler)
       ..post('/setScenario', _setScenarioHandler)
       ..post('/setSection', _setSectionHandler)
       ..post('/applyCondition', _applyConditionHandler)
@@ -244,7 +245,8 @@ class WebServer {
                   level = stats.boss;
                   break;
               }
-              return Target(level, instance, item.id, instance.getId());
+              return Target(
+                  level, instance, item.id, instance.getId(), instance.type);
             }
           }
         }
@@ -254,15 +256,16 @@ class WebServer {
         // In some cases, where the nr is in the name, we need to reconstruct it
         // As we've split name and nr above.
         if (item.id == target || item.id == "$target $nr") {
-          return Target(null, item.characterState, item.id, item.id);
+          return Target(null, item.characterState, item.id, item.id, null);
         } else if (item.characterClass.name == target) {
-          return Target(null, item.characterState, item.id, item.id);
+          return Target(null, item.characterState, item.id, item.id, null);
         } else {
           // Look for the summons
           for (var summon in item.characterState.summonList.value) {
             print("summon : $summon");
             if (summon.name == target && summon.standeeNr == nr) {
-              return Target(null, summon, item.id, summon.getId());
+              return Target(
+                  null, summon, item.id, summon.getId(), MonsterType.summon);
             }
           }
         }
@@ -313,7 +316,7 @@ class WebServer {
       if (what == "hp" || what == "health") {
         _gameState
             .action(ChangeHealthCommand(change, target.id, target.ownerId));
-      } else  if (what == "maxHp") {
+      } else if (what == "maxHp") {
         _gameState
             .action(ChangeMaxHealthCommand(change, target.id, target.ownerId));
       } else if (what == "xp") {
@@ -444,6 +447,30 @@ class WebServer {
     return Response.notFound("");
   }
 
+  Future<Response> _updateStandeeNrHandler(Request request) async {
+    var data = Uri.decodeFull(await request.readAsString());
+    Map<String, dynamic> info = jsonDecode(data);
+    var monsterName = info["name"];
+    var number = int.parse(info["nr"]);
+    var newNumber = info["newNr"];
+    var target = findTarget(monsterName, number);
+    if (target != null) {
+      var newTarget = findTarget(monsterName, newNumber);
+      if (newTarget == null) {
+        // We need to create a new standee with the new number
+        _gameState.action(AddStandeeCommand(newNumber, null, target.ownerId,
+            target.type ?? MonsterType.normal, false));
+      }
+      // Remove the old standee if the numbers are different
+      if (number != newNumber) {
+        _gameState.action(ChangeHealthCommand(-999, target.id, target.ownerId));
+      }
+
+      return _getStateHandler(request);
+    }
+    return Response.notFound("");
+  }
+
   Future<Response> _lootHandler(Request request) async {
     var data = Uri.decodeFull(await request.readAsString());
     Map<String, dynamic> info = jsonDecode(data);
@@ -465,7 +492,7 @@ class WebServer {
     var data = Uri.decodeFull(await request.readAsString());
     Map<String, dynamic> info = jsonDecode(data);
     int level = info["level"] ?? 0;
-    if(_gameState.level.value != level) {
+    if (_gameState.level.value != level) {
       _gameState.action(SetLevelCommand(level, null));
     }
     return _getStateHandler(request);
