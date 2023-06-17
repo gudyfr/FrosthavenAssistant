@@ -32,19 +32,24 @@ void main() {
     await Directory(abilityCardsOutputFolder).create(recursive: true);
     await Directory(statsCardsOutputFolder).create(recursive: true);
     var editions = ['Frosthaven', 'Solo'];
+    Map<String, List<MonsterAbilityCardModel>> abilityCards = HashMap();
+    for(var edition in editions) {
+      var model = gameState.modelData.value[edition];
+      if (model != null) {
+        for (var deck in model.monsterAbilities) {
+          abilityCards[deck.name] = deck.cards;
+        }
+      }
+    }
+
     for(var edition in editions) {
       var model = gameState.modelData.value[edition];
       if (model != null) {
         var monsters = model.monsters;
-        var abilityCardsList = model.monsterAbilities;
-        Map<String, List<MonsterAbilityCardModel>> abilityCards = HashMap();
-        for (var deck in abilityCardsList) {
-          abilityCards[deck.name] = deck.cards;
-        }
         for (var name in monsters.keys) {
-          debugPrint(name);
           var monster = monsters[name];
           if (monster != null) {
+            debugPrint("$name -> ${monster.name} (Deck : ${monster.deck})");
             var monsterAbilityCards = abilityCards[monster.deck];
             if (monsterAbilityCards != null) {
               for (var level in monster.levels) {
