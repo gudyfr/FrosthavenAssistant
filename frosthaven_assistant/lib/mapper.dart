@@ -142,8 +142,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SteamClient.init();
   var manager = TTSCloudManager();
-  var files = manager.listFiles();
-  debugPrint("${files.length} Files");
+  // var files = manager.listFiles();
+  // debugPrint("${files.length} Files");
   // var cutoffDate = DateTime(2023,6,15);
   // debugPrint("${files.length} Files");
 
