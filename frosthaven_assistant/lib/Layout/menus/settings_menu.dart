@@ -571,6 +571,18 @@ class SettingsMenuState extends State<SettingsMenu> {
                                 ),
                               ),
                               ValueListenableBuilder<bool>(
+                                  valueListenable: settings.autoStartServers,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text("Start Both Servers upon launching X-Haven"),
+                                        value: settings.autoStartServers.value,
+                                        onChanged: (bool? value) {
+                                          settings.autoStartServers.value = ! settings.autoStartServers.value;
+                                          settings.lastKnownWebPort = _webPortTextController.text;
+                                          settings.saveToDisk();
+                                        });
+                                  }),
+                              ValueListenableBuilder<bool>(
                                   valueListenable: settings.forteller,
                                   builder: (context, value, child) {
                                     return CheckboxListTile(

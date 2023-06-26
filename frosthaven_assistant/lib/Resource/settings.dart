@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/Resource/scaling.dart';
 import 'package:frosthaven_assistant/Resource/state/monster.dart';
+import 'package:frosthaven_assistant/services/network/server.dart';
+import 'package:frosthaven_assistant/services/network/web_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import '../services/network/client.dart';
@@ -57,6 +59,7 @@ class Settings {
   final enableWebServer = ValueNotifier<bool>(false);
   String lastKnownWebPort = "8080";
   final webFolder = ValueNotifier<String>("");
+  final autoStartServers = ValueNotifier<bool>(false);
 
   final forteller = ValueNotifier<bool>(false);
   String lastKnownFortellerEmail = "";
@@ -268,6 +271,10 @@ class Settings {
         autoAddSpawns.value = data["autoAddSpawns"];
       }
 
+      if (data["autoStartServers"] != null) {
+        autoStartServers.value = data["autoStartServers"];
+      }
+
       if (data["connectClientOnStartup"] != null &&
           data["connectClientOnStartup"] != false) {
         Future.delayed(const Duration(milliseconds: 2000), () {
@@ -342,6 +349,7 @@ class Settings {
         '"showReminders": ${showReminders.value}, '
         '"autoAddStandees": ${autoAddStandees.value}, '
         '"autoAddSpawns": ${autoAddSpawns.value}, '
+        '"autoStartServers": ${autoStartServers.value}, '
         '"connectClientOnStartup": $connectClientOnStartup, '
         '"lastKnownConnection": "$lastKnownConnection", '
         '"lastKnownPort": "$lastKnownPort", '
