@@ -103,9 +103,10 @@ class GameSaveState {
         }
 
         if (data.containsKey('scenarioSectionsAdded')) {
-          List<dynamic> scenarioSectionsAdded = data['scenarioSectionsAdded'] as List;
+          List<dynamic> scenarioSectionsAdded =
+              data['scenarioSectionsAdded'] as List;
           gameState._scenarioSectionsAdded.clear();
-          for(var item in scenarioSectionsAdded) {
+          for (var item in scenarioSectionsAdded) {
             gameState._scenarioSectionsAdded.add(item);
           }
         }
@@ -188,6 +189,11 @@ class GameSaveState {
         loadModifierDeck('modifierDeck', data);
         loadModifierDeck('modifierDeckAllies', data);
         loadLootDeck(data);
+
+        //this is not really a setting, but a scenario command?
+        if (data["showAllyDeck"] != null) {
+          gameState.showAllyDeck.value = data["showAllyDeck"];
+        }
 
         //////elements
         Map elementData = data['elementState'];

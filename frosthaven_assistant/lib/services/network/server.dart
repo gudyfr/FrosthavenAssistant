@@ -14,7 +14,7 @@ import 'network.dart';
 import 'dart:convert' show utf8;
 
 class Server {
-  final int serverVersion = 181;
+  final int serverVersion = 184;
 
   final GameState _gameState = getIt<GameState>();
   final _communication = getIt<Communication>();
@@ -45,15 +45,15 @@ class Server {
           connectTo; //if not on wifi show local ip
     }
     try {
-      await ServerSocket.bind(
-              connectTo, int.parse(getIt<Settings>().lastKnownPort))
+      await ServerSocket.bind(InternetAddress.anyIPv4.address,
+              int.parse(getIt<Settings>().lastKnownPort))
           .then((ServerSocket serverSocket) {
         runZoned(() {
           _serverSocket = serverSocket;
 
           getIt<Settings>().server.value = true;
           String info =
-              'Server Online: IP: ${_serverSocket!.address.address}, Port: ${_serverSocket!.port.toString()}';
+              'Server Online: IP: $connectTo, Port: ${_serverSocket!.port.toString()}';
           print(info);
           getIt<Network>().networkMessage.value = info;
           _gameState.commandIndex.value = -1;
@@ -239,7 +239,9 @@ class Server {
               break;
             }
           }*/
-          if(error is SocketException && (error.osError?.errorCode == 103 || error.osError?.errorCode == 32)) {
+          if (error is SocketException &&
+              (error.osError?.errorCode == 103 ||
+                  error.osError?.errorCode == 32)) {
             stopServer(error.toString());
           }
         },

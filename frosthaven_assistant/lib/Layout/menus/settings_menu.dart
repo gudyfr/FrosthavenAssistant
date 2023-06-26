@@ -183,8 +183,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Custom Content"),
+                                  title: const Text("Show Custom Content"),
                                   value: settings.showCustomContent.value,
                                   onChanged: (bool? value) {
                                     setState(() {
@@ -194,23 +193,36 @@ class SettingsMenuState extends State<SettingsMenu> {
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Sections in Main Screen"),
+                                  title: const Text(
+                                      "Show Sections in Main Screen"),
                                   value: settings.showSectionsInMainView.value,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      settings.showSectionsInMainView.value = value!;
+                                      settings.showSectionsInMainView.value =
+                                          value!;
                                       settings.saveToDisk();
                                       getIt<GameState>().updateAllUI();
                                     });
                                   }),
                               CheckboxListTile(
-                                  title:
-                                  const Text("Show Round Special Rule Reminders"),
+                                  title: const Text(
+                                      "Show Round Special Rule Reminders"),
                                   value: settings.showReminders.value,
                                   onChanged: (bool? value) {
                                     setState(() {
                                       settings.showReminders.value = value!;
+                                      settings.saveToDisk();
+                                      getIt<GameState>().updateAllUI();
+                                    });
+                                  }),
+                              CheckboxListTile(
+                                  title: const Text(
+                                      "Show Attack Modifier Decks"),
+                                  value: settings.showAmdDeck.value,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      settings.showAmdDeck.value =
+                                      value!;
                                       settings.saveToDisk();
                                       getIt<GameState>().updateAllUI();
                                     });
@@ -348,21 +360,28 @@ class SettingsMenuState extends State<SettingsMenu> {
                                   builder: (context, value, child) {
                                     bool connected = false;
                                     String connectionText = "Connect as Client";
-                                    if (settings.client.value == ClientState.connected) {
+                                    if (settings.client.value ==
+                                        ClientState.connected) {
                                       connected = true;
                                       connectionText = "Connected as Client";
                                     }
-                                    if (settings.client.value == ClientState.connecting) {
+                                    if (settings.client.value ==
+                                        ClientState.connecting) {
                                       connectionText = "Connecting...";
                                     }
                                     return CheckboxListTile(
-                                        enabled: settings.server.value == false && settings.client.value != ClientState.connecting,
+                                        enabled:
+                                            settings.server.value == false &&
+                                                settings.client.value !=
+                                                    ClientState.connecting,
                                         title: Text(connectionText),
                                         value: connected,
                                         onChanged: (bool? value) {
                                           setState(() {
-                                            if (settings.client.value != ClientState.connected) {
-                                              settings.client.value = ClientState.connecting;
+                                            if (settings.client.value !=
+                                                ClientState.connected) {
+                                              settings.client.value =
+                                                  ClientState.connecting;
                                               settings.lastKnownPort =
                                                   _portTextController.text;
                                               getIt<Client>()
@@ -373,8 +392,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                                   _serverTextController.text;
                                               settings.saveToDisk();
                                             } else {
-                                              getIt<Client>()
-                                                  .disconnect(null);
+                                              getIt<Client>().disconnect(null);
                                             }
                                           });
                                         });
@@ -420,10 +438,7 @@ class SettingsMenuState extends State<SettingsMenu> {
                                             settings.lastKnownPort =
                                                 _portTextController.text;
                                             settings.lastKnownHostIP =
-                                                "(${getIt<Network>()
-                                                  .networkInfo
-                                                  .wifiIPv4
-                                                  .value})";
+                                                "(${getIt<Network>().networkInfo.wifiIPv4.value})";
                                             settings.saveToDisk();
                                             getIt<Network>()
                                                 .server
