@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:frosthaven_assistant/Layout/menus/ability_cards_menu.dart';
 import 'package:frosthaven_assistant/Layout/menus/add_character_menu.dart';
 import 'package:frosthaven_assistant/Layout/menus/add_section_menu.dart';
 import 'package:frosthaven_assistant/Layout/menus/loot_cards_menu.dart';
@@ -104,7 +103,7 @@ Drawer createMainMenu(BuildContext context) {
                 child: Stack(
                   children: [
                     Positioned(
-                        right: 6, bottom: 0, child: Text("Version 1.8.4"))
+                        right: 6, bottom: 0, child: Text("Version 1.8.5"))
                   ],
                 ),
               ),
