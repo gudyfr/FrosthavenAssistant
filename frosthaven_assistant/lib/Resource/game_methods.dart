@@ -92,7 +92,7 @@ class GameMethods {
         if (item is Monster) {
           if (item.type.deck == deck.name) {
             if (item.monsterInstances.value.isNotEmpty || item.isActive) {
-              if (deck.lastRoundDrawn != _gameState.round.value) {
+              if (deck.lastRoundDrawn < _gameState.round.value) {
                 deck.draw();
                 break;
               }
@@ -372,6 +372,7 @@ class GameMethods {
 
   static void resetGameState() {
     GameMethods.setRound(1);
+    _gameState.showAllyDeck.value = false;
     _gameState._currentAbilityDecks.clear();
     _gameState._scenarioSpecialRules.clear();
     List<ListItemData> newList = [];
@@ -412,6 +413,7 @@ class GameMethods {
       //first reset state
       resetGameState();
 
+
       //loot deck init
       if (scenario != "custom") {
         LootDeckModel? lootDeckModel = _gameState
@@ -425,7 +427,13 @@ class GameMethods {
           _gameState._lootDeck = LootDeck.from(_gameState.lootDeck);
         }
       } else {
-        _gameState._lootDeck = LootDeck.from(_gameState.lootDeck);
+        if (_gameState.currentCampaign.value == "Frosthaven") {
+          //add loot deck for random scenarios
+          LootDeckModel? lootDeckModel = const LootDeckModel(2, 2, 2, 12, 1, 1, 1, 1, 1, 1, 0);
+          _gameState._lootDeck = LootDeck(lootDeckModel, _gameState.lootDeck);
+        } else {
+          _gameState._lootDeck = LootDeck.from(_gameState.lootDeck);
+        }
       }
 
       GameMethods.clearTurnState(true);
@@ -588,16 +596,17 @@ class GameMethods {
                         List<int> normal = [
                           item.normal[0] + spawnItem.normal[0],
                           item.normal[1] + spawnItem.normal[1],
-                          item.normal[2] +  spawnItem.normal[2]
+                          item.normal[2] + spawnItem.normal[2]
                         ];
                         List<int> elite = [
                           item.elite[0] + spawnItem.elite[0],
                           item.elite[1] + spawnItem.elite[1],
-                          item.elite[2] +  spawnItem.elite[2]
+                          item.elite[2] + spawnItem.elite[2]
                         ];
-                        RoomMonsterData mergedItem = RoomMonsterData(item.name, normal, elite);
+                        RoomMonsterData mergedItem =
+                            RoomMonsterData(item.name, normal, elite);
                         for (int i = 0; i < roomMonsterData.length; i++) {
-                          if(roomMonsterData[i].name == item.name) {
+                          if (roomMonsterData[i].name == item.name) {
                             roomMonsterData[i] = mergedItem;
                             break;
                           }
@@ -620,7 +629,7 @@ class GameMethods {
     if (!section) {
       _gameState._scenarioSpecialRules = specialRules;
 
-      //todo: create a gamestate set scenario method to handle all these
+      //todo: create a game state set scenario method to handle all these
       GameMethods.updateElements();
       GameMethods.updateElements(); //twice to make sure they are inert.
       GameMethods.setRoundState(RoundState.chooseInitiative);
@@ -672,6 +681,16 @@ class GameMethods {
       _gameState._toastMessage.value += initMessage;
     } else {
       ScaffoldMessenger.of(getIt<BuildContext>()).hideCurrentSnackBar();
+    }
+  }
+
+  static void returnLootCard(bool top) {
+    var card = _gameState._lootDeck.discardPile.pop();
+      card.owner = "";
+      if(top) {
+        _gameState._lootDeck.drawPile.push(card);
+      } else {
+        _gameState._lootDeck.drawPile.getList().insert(0, card);
     }
   }
 
@@ -786,7 +805,6 @@ class GameMethods {
   }
 
   static int getRandomStandee(Monster data) {
-    //TODO: handle standees used by other special monsters
     int nrOfStandees = data.type.count;
     List<int> available = [];
     for (int i = 0; i < nrOfStandees; i++) {
@@ -1169,7 +1187,17 @@ class GameMethods {
     return monster;
   }
 
-  static bool hasAllies() {
+  static void showAllyDeck() {
+    _gameState.showAllyDeck.value = true;
+  }
+
+  static bool shouldShowAlliesDeck() {
+    if (!getIt<Settings>().showAmdDeck.value ) {
+      return false;
+    }
+    if (_gameState.showAllyDeck.value ) {
+      return true;
+    }
     for (var item in _gameState.currentList) {
       if (item is Monster) {
         if (item.isAlly) {
@@ -1221,7 +1249,6 @@ class GameMethods {
   }
 
   static bool canExpire(Condition condition) {
-    //TODO look it up
     if (
         //condition == Condition.bane || //don't remove bane because user need to remember to remove 10hp as well
         condition == Condition.strengthen ||
@@ -1361,6 +1388,9 @@ class GameMethods {
       return true;
     }
     if (campaign == "Trail of Ashes") {
+      return true;
+    }
+    if (campaign == "CCUG") {
       return true;
     }
     return false;

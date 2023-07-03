@@ -1,5 +1,6 @@
 library game_state;
 import 'package:audioplayers/audioplayers.dart';
+
 import 'package:built_collection/built_collection.dart';
 import 'dart:collection';
 import 'dart:convert';
@@ -146,11 +147,14 @@ class GameState extends ActionHandler {
   ValueListenable<String> get scenario => _scenario;
   final _scenario = ValueNotifier<String>("");
 
-  BuiltList<String> get scenarioSectionsAdded => BuiltList.of(_scenarioSectionsAdded);
+  BuiltList<String> get scenarioSectionsAdded =>
+      BuiltList.of(_scenarioSectionsAdded);
   List<String> _scenarioSectionsAdded = [];
 
-  BuiltList<SpecialRule> get scenarioSpecialRules => BuiltList.of(_scenarioSpecialRules);
-  List<SpecialRule> _scenarioSpecialRules = []; //has both monsters and characters
+  BuiltList<SpecialRule> get scenarioSpecialRules =>
+      BuiltList.of(_scenarioSpecialRules);
+  List<SpecialRule> _scenarioSpecialRules =
+      []; //has both monsters and characters
 
   LootDeck get lootDeck => _lootDeck; //todo: still mutable
   late LootDeck _lootDeck = LootDeck.empty(); //loot deck for current scenario
@@ -161,23 +165,28 @@ class GameState extends ActionHandler {
   BuiltList<ListItemData> get currentList => BuiltList.of(_currentList);
   List<ListItemData> _currentList = []; //has both monsters and characters
 
-  BuiltList<MonsterAbilityState> get currentAbilityDecks => BuiltList.of(_currentAbilityDecks);
+  BuiltList<MonsterAbilityState> get currentAbilityDecks =>
+      BuiltList.of(_currentAbilityDecks);
   List<MonsterAbilityState> _currentAbilityDecks =
       <MonsterAbilityState>[]; //add to here when adding a monster type
 
   //elements
-  BuiltMap<Elements, ElementState> get elementState => BuiltMap.of(_elementState);
+  BuiltMap<Elements, ElementState> get elementState =>
+      BuiltMap.of(_elementState);
   final Map<Elements, ElementState> _elementState = HashMap();
 
   //modifierDeck
   ModifierDeck get modifierDeck => _modifierDeck; //todo: still mutable
   ModifierDeck _modifierDeck = ModifierDeck("");
-  ModifierDeck get modifierDeckAllies => _modifierDeckAllies; //todo: still mutable
+  ModifierDeck get modifierDeckAllies =>
+      _modifierDeckAllies; //todo: still mutable
   ModifierDeck _modifierDeckAllies = ModifierDeck("allies");
 
   //unlocked characters
   BuiltSet<String> get unlockedClasses => BuiltSet.of(_unlockedClasses);
   Set<String> _unlockedClasses = {};
+
+  final showAllyDeck = ValueNotifier<bool>(false);
 
   @override
   String toString() {
@@ -202,6 +211,7 @@ class GameState extends ActionHandler {
         '"modifierDeckAllies": ${_modifierDeckAllies.toString()}, '
         '"lootDeck": ${_lootDeck.toString()}, ' //does this work if null?
         '"unlockedClasses": ${jsonEncode(unlockedClasses.toList())}, '
+        '"showAllyDeck": ${showAllyDeck.value}, '
         '"elementState": ${json.encode(elements)} '
         '}';
   }
