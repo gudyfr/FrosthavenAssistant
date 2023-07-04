@@ -19,20 +19,21 @@ class MonsterInstance extends FigureState {
     move = 0; //only used for summons
     attack = 0;
     range = 0;
-    if(summoned) {
+    if (summoned) {
       roundSummoned = getIt<GameState>().round.value;
     } else {
       roundSummoned = -1;
     }
   }
 
-  MonsterInstance.summon(this.standeeNr, this.type, this.name, int summonHealth, this.move, this.attack, this.range, this.gfx, this.roundSummoned) {
+  MonsterInstance.summon(this.standeeNr, this.type, this.name, int summonHealth,
+      this.move, this.attack, this.range, this.gfx, this.roundSummoned) {
     //deal with summon init
     maxHealth.value = summonHealth;
     health.value = summonHealth;
   }
 
-  String getId(){
+  String getId() {
     return name + gfx + standeeNr.toString();
   }
 
@@ -78,27 +79,29 @@ class MonsterInstance extends FigureState {
       maxHealth.value = value;
     } else {
       //handle edge case
-      if(newHealthValue == "Hollowpact"){
+      if (newHealthValue == "Hollowpact") {
         int value = 7;
-        for(var item in getIt<GameState>().currentList) {
-          if(item is Character && item.id == "Hollowpact") {
-            value = item.characterClass.healthByLevel[item.characterState.level.value-1];
+        for (var item in getIt<GameState>().currentList) {
+          if (item is Character && item.id == "Hollowpact") {
+            value = item.characterClass
+                .healthByLevel[item.characterState.level.value - 1];
             break;
           }
         }
         maxHealth.value = value;
       }
-      if(newHealthValue == "Incarnate"){
+      if (newHealthValue == "Incarnate") {
         int value = 36; //double Incarante's level 5 health
-        for(var item in getIt<GameState>().currentList) {
-          if(item is Character && item.id == "Incarnate") {
-            value = item.characterClass.healthByLevel[item.characterState.level.value-1] * 2;
+        for (var item in getIt<GameState>().currentList) {
+          if (item is Character && item.id == "Incarnate") {
+            value = item.characterClass
+                    .healthByLevel[item.characterState.level.value - 1] *
+                2;
             break;
           }
         }
         maxHealth.value = value;
       }
-
     }
     //maxHealth.value = StatCalculator.calculateFormula(newHealthValue)!;
     level.value = monster.level.value;
@@ -141,29 +144,29 @@ class MonsterInstance extends FigureState {
     range = json["range"];
     baseShield.value = json["baseShield"] ?? 0;
     baseRetaliate.value = json["baseRetaliate"] ?? 0;
-    if(json.containsKey("roundSummoned")) {
+
+    if (json.containsKey("roundSummoned")) {
       roundSummoned = json["roundSummoned"];
     } else {
       roundSummoned = -1;
     }
     chill.value = json["chill"];
     List<dynamic> condis = json["conditions"];
-    for(int item in condis){
+    for (int item in condis) {
       conditions.value.add(Condition.values[item]);
     }
 
-    if(json.containsKey("conditionsAddedThisTurn")) {
+    if (json.containsKey("conditionsAddedThisTurn")) {
       List<dynamic> condis2 = json["conditionsAddedThisTurn"];
       for (int item in condis2) {
         conditionsAddedThisTurn.value.add(Condition.values[item]);
       }
     }
-    if(json.containsKey("conditionsAddedPreviousTurn")) {
+    if (json.containsKey("conditionsAddedPreviousTurn")) {
       List<dynamic> condis3 = json["conditionsAddedPreviousTurn"];
       for (int item in condis3) {
         conditionsAddedPreviousTurn.value.add(Condition.values[item]);
       }
     }
   }
-
 }

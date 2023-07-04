@@ -10,19 +10,16 @@ import 'list_item_data.dart';
 import 'monster_instance.dart';
 
 class Monster extends ListItemData {
-  Monster(String name, int level, {required bool isAlly}) : isAlly = isAlly {
+  Monster(String name, int level, {required this.isAlly}) {
     id = name;
-    this.isAlly = isAlly;
     this.level.value = level;
     GameState gameState = getIt<GameState>();
     Map<String, MonsterModel> monsters = {};
-    for (String key in gameState.modelData.value.keys){
-      monsters.addAll(
-          gameState.modelData.value[key]!.monsters
-      );
+    for (String key in gameState.modelData.value.keys) {
+      monsters.addAll(gameState.modelData.value[key]!.monsters);
     }
-    for(String key in monsters.keys) {
-      if(key == name) {
+    for (String key in monsters.keys) {
+      if (key == name) {
         type = monsters[key]!;
       }
     }
@@ -38,7 +35,7 @@ class Monster extends ListItemData {
 
   bool hasElites() {
     for (var instance in monsterInstances.value) {
-      if(instance.type == MonsterType.elite) {
+      if (instance.type == MonsterType.elite) {
         return true;
       }
     }
@@ -48,7 +45,7 @@ class Monster extends ListItemData {
   //includes boss
   bool hasNormal() {
     for (var instance in monsterInstances.value) {
-      if(instance.type != MonsterType.elite) {
+      if (instance.type != MonsterType.elite) {
         return true;
       }
     }
@@ -57,7 +54,7 @@ class Monster extends ListItemData {
 
   void setLevel(int level) {
     this.level.value = level;
-    for(var item in monsterInstances.value) {
+    for (var item in monsterInstances.value) {
       item.setLevel(this);
     }
   }
@@ -85,7 +82,7 @@ class Monster extends ListItemData {
         '}';
   }
 
-  Monster.fromJson(Map<String, dynamic> json):isAlly = false {
+  Monster.fromJson(Map<String, dynamic> json) : isAlly = false {
     id = json['id'];
     turnState = TurnsState.values[json['turnState']];
     level.value = json['level'];
@@ -100,13 +97,11 @@ class Monster extends ListItemData {
 
     GameState gameState = getIt<GameState>();
     Map<String, MonsterModel> monsters = {};
-    for (String key in gameState.modelData.value.keys){
-      monsters.addAll(
-          gameState.modelData.value[key]!.monsters
-      );
+    for (String key in gameState.modelData.value.keys) {
+      monsters.addAll(gameState.modelData.value[key]!.monsters);
     }
-    for(var item in monsters.keys) {
-      if(item == modelName){
+    for (var item in monsters.keys) {
+      if (item == modelName) {
         type = monsters[item]!;
         break;
       }
@@ -115,10 +110,9 @@ class Monster extends ListItemData {
     List<dynamic> instanceList = json["monsterInstances"];
 
     List<MonsterInstance> newList = [];
-    for(Map<String, dynamic> item in instanceList){
+    for (Map<String, dynamic> item in instanceList) {
       var instance = MonsterInstance.fromJson(item);
       newList.add(instance);
-
     }
     monsterInstances.value = newList;
   }

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frosthaven_assistant/Resource/adjustable_scroll_controller.dart';
 import 'package:frosthaven_assistant/Resource/commands/track_standees_command.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/forteller/downloader.dart';
@@ -42,6 +41,8 @@ class SettingsMenuState extends State<SettingsMenu> {
 
   final AdjustableScrollController scrollController =
       AdjustableScrollController();
+  final ScrollController scrollController =
+      ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +227,18 @@ class SettingsMenuState extends State<SettingsMenu> {
                                   onChanged: (bool? value) {
                                     setState(() {
                                       settings.showReminders.value = value!;
+                                      settings.saveToDisk();
+                                      getIt<GameState>().updateAllUI();
+                                    });
+                                  }),
+                              CheckboxListTile(
+                                  title: const Text(
+                                      "Show Attack Modifier Decks"),
+                                  value: settings.showAmdDeck.value,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      settings.showAmdDeck.value =
+                                      value!;
                                       settings.saveToDisk();
                                       getIt<GameState>().updateAllUI();
                                     });
