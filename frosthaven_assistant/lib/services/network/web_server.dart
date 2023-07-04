@@ -477,15 +477,20 @@ class WebServer {
     String name = info["target"];
     int count = info["count"] ?? 1;
     var target = findTarget(name, 0);
+    List<String> drawnCards = [];
     if (target != null) {
       for (var i = 0; i < count; i++) {
-        await Future.delayed(Duration(seconds: 1));
+        if (i > 0) {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+
         _gameState.action(DrawLootCardCommand());
         LootCard card = _gameState.lootDeck.discardPile.getList().last;
         _gameState.action(SetLootOwnerCommand(target.ownerId, card));
+        drawnCards.add(card.id.toString());
       }
     }
-    return Response.ok("");
+    return Response.ok(jsonEncode(drawnCards));
   }
 
   Future<Response> _setLevelHandler(Request request) async {

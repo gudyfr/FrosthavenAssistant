@@ -236,7 +236,7 @@ class LootDeck {
     _addCardFromPool(model.lumber, lumberPool, cards);
 
     for (int i = 0; i < model.treasure; i++) {
-      _addOtherType(9999, cards, "treasure");
+      _addOtherType(1417, cards, "treasure");
     }
 
     drawPile.setList(cards);
@@ -259,10 +259,10 @@ class LootDeck {
 
   void _initMaterialPool(int startId, List<LootCard> list, String gfx) {
     list.clear();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
       list.add(LootCard(
           id: startId,
-          baseValue: LootBaseValue.one,
+          baseValue: LootBaseValue.oneIf4twoIfNot,
           enhanced: enhancements[startId.toString()] != null
               ? enhancements[startId.toString()]!
               : 0,
@@ -281,10 +281,10 @@ class LootDeck {
           gfx: gfx));
       startId++;
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
       list.add(LootCard(
           id: startId,
-          baseValue: LootBaseValue.oneIf4twoIfNot,
+          baseValue: LootBaseValue.one,
           enhanced: enhancements[startId.toString()] != null
               ? enhancements[startId.toString()]!
               : 0,
@@ -323,7 +323,7 @@ class LootDeck {
     snowthistlePool = [];
     corpsecapPool = [];
 
-    int id = 1;
+    int id = 1361;
 
     for (int i = 0; i < 12; i++) {
       _addOtherType(id, coinPool, "coin 1");
@@ -339,12 +339,6 @@ class LootDeck {
     id++;
     //coinPool.shuffle();
 
-    _initMaterialPool(id, lumberPool, "lumber");
-    id += 8;
-    _initMaterialPool(id, hidePool, "hide");
-    id += 8;
-    _initMaterialPool(id, metalPool, "metal");
-    id += 8;
     _initHerbPool(id, arrowvinePool, "arrowvine");
     id += 2;
     _initHerbPool(id, axenutPool, "axenut");
@@ -353,9 +347,15 @@ class LootDeck {
     id += 2;
     _initHerbPool(id, flamefruitPool, "flamefruit");
     id += 2;
+    _initHerbPool(id, rockrootPool, "rockroot");
+    id += 2;
     _initHerbPool(id, snowthistlePool, "snowthistle");
     id += 2;
-    _initHerbPool(id, rockrootPool, "rockroot");
+    _initMaterialPool(id, hidePool, "hide");
+    id += 8;
+    _initMaterialPool(id, lumberPool, "lumber");
+    id += 8;
+    _initMaterialPool(id, metalPool, "metal");
   }
 
   void addSpecial1418() {
