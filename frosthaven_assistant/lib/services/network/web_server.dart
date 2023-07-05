@@ -54,6 +54,7 @@ class WebServer {
       ..get('/play/<folder>/<file>', _playFileHandler)
       ..get('/out/<file>', _getOutFileHandler)
       ..get('/getLoot', _getLootHandler)
+      ..get('/getLootDrawDeck', _lootDrawDeckHandler)
       ..post('/startRound', _startRoundHandler)
       ..post('/endRound', _endRoundHandler)
       ..post('/addMonster', _addMonsterHandler)
@@ -488,6 +489,15 @@ class WebServer {
       }
     }
     return Response.ok(jsonEncode(drawnCards));
+  }
+
+  Future<Response> _lootDrawDeckHandler(Request _) async {
+    List<String> lootDeck = [];
+    _gameState.lootDeck.drawPile.getList().forEach((card) {
+      lootDeck.insert(0, card.id.toString());
+    });
+
+    return Response.ok(jsonEncode(lootDeck));
   }
 
   Future<Response> _setLevelHandler(Request request) async {
