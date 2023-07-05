@@ -4,6 +4,7 @@ import 'package:dart_ipify/dart_ipify.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
+import 'package:frosthaven_assistant/services/network/AutoConnect.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:developer' as developer;
@@ -36,6 +37,8 @@ class NetworkInformation {
 
   final wifiIPv4 = ValueNotifier<String>("");
   final outgoingIPv4 = ValueNotifier<String>("");
+
+  bool ready = false;
 
   Future<void> initNetworkInfo() async {
     try {
@@ -75,18 +78,10 @@ class NetworkInformation {
       }
     }
 
-    if(getIt<Settings>().autoStartServers.value) {
-      if(! getIt<Settings>().server.value) {
-        getIt<Settings>().server.value = true;
-        getIt<Network>().server.startServer();
-      }
-      if(!getIt<Settings>().enableWebServer.value) {
-        getIt<Settings>().enableWebServer.value = true;
-        getIt<Network>().webServer.startServer();
-      }
-    }
-
     developer.log('Wifi IPv4: ${wifiIPv4.value}\n'
         'Outgoing IPv4: ${outgoingIPv4.value}\n');
+
+    final autoConnect = getIt<AutoConnect>();
+    autoConnect.networkInfoReady = true;
   }
 }

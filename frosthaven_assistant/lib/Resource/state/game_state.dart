@@ -8,6 +8,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:frosthaven_assistant/Model/summon.dart';
+import 'package:frosthaven_assistant/services/network/AutoConnect.dart';
+import 'package:frosthaven_assistant/services/network/network.dart';
 
 import '../../Layout/main_list.dart';
 import '../../Model/campaign.dart';
@@ -95,6 +97,8 @@ class GameState extends ActionHandler {
     load(); //load saved state from file.
 
     modelData.value = map;
+
+    getIt<AutoConnect>().gameStateReady = true;
   }
 
   Future<EditionRoomsModel?> fetchRoomData(String campaign) async {

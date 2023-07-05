@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
@@ -34,6 +33,13 @@ class Server {
     }
   }
 
+  int _max(int a, int b) {
+    if (a > b) {
+      return a;
+    }
+    return b;
+  }
+
   Future<void> startServer() async {
     //_clients.clear();
     String connectTo = InternetAddress.anyIPv4.address; //"0.0.0.0";
@@ -60,7 +66,7 @@ class Server {
           _gameState.commands.clear();
           _gameState.commandDescriptions.clear();
           _gameState.gameSaveStates
-              .removeRange(0, _gameState.gameSaveStates.length - 1);
+              .removeRange(0, _max(0,_gameState.gameSaveStates.length - 1));
 
           //if has clients when connecting (re connect) run reset/welcome message
           String commandDescription = "";

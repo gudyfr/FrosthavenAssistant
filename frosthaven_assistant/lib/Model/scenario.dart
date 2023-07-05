@@ -69,7 +69,7 @@ class SpecialRule {
   final dynamic condition;
 
   const SpecialRule(this.type, this.name, this.health, this.level, this.init,
-      this.note, this.list, this.startOfRound, this.condition);
+      this.note, this.notes, this.list, this.startOfRound, this.condition);
 
   factory SpecialRule.fromJson(Map<String, dynamic> data) {
     final String type = data['type']; //required
@@ -110,7 +110,7 @@ class SpecialRule {
       aList = data['list'];
     }
     return SpecialRule(
-        type, name, health, level, init, note, aList, startOfRound, condition);
+        type, name, health, level, init, note,notes, aList, startOfRound, condition);
   }
 
   //is this used at all?

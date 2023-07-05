@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:frosthaven_assistant/Resource/settings.dart';
+import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/forteller/downloader.dart';
 import 'package:frosthaven_assistant/services/network/server.dart';
 import 'package:frosthaven_assistant/services/network/web_server.dart';
@@ -17,4 +19,6 @@ class Network {
 
   bool appInBackground = false;
   bool clientDisconnectedWhileInBackground = false;
+  bool gameStateReady = false;
+  bool networkInfoReady = false;
 }

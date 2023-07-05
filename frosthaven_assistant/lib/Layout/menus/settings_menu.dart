@@ -39,8 +39,6 @@ class SettingsMenuState extends State<SettingsMenu> {
   final TextEditingController _fortellerPasswordTextController =
       TextEditingController();
 
-  final AdjustableScrollController scrollController =
-      AdjustableScrollController();
   final ScrollController scrollController =
       ScrollController();
 
