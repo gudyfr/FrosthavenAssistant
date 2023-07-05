@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_character_command.dart';
 import 'package:frosthaven_assistant/Resource/commands/add_condition_command.dart';
@@ -37,7 +35,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
-import 'package:shelf_static/shelf_static.dart' as shelf_static;
 
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
@@ -45,7 +42,7 @@ import '../service_locator.dart';
 import 'package:path/path.dart' as p;
 
 class WebServer {
-  static const int VERSION = 6;
+  static const int VERSION = 7;
   final GameState _gameState = getIt<GameState>();
 
   HttpServer? _server;
