@@ -35,17 +35,64 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
     super.initState();
   }
 
+
+  static void _handleAddPressed(
+      Monster data, BuildContext context, bool left, bool isBoss) {
+    Settings settings = getIt<Settings>();
+    if (settings.noStandees.value == true) {
+      getIt<GameState>()
+          .action(ActivateMonsterTypeCommand(data.id, !data.isActive));
+      return;
+    }
+
+    if (data.monsterInstances.value.length == data.type.count - 1) {
+      //directly add last standee
+      GameMethods.addStandee(
+          null,
+          data,
+          isBoss
+              ? MonsterType.boss
+              : left
+                  ? MonsterType.normal
+                  : MonsterType.elite,
+          false);
+    } else if (data.monsterInstances.value.length < data.type.count - 1) {
+      if (settings.randomStandees.value == true) {
+        int standeeNr = GameMethods.getRandomStandee(data);
+        if (standeeNr != 0) {
+          getIt<GameState>().action(AddStandeeCommand(
+              standeeNr,
+              null,
+              data.id,
+              isBoss
+                  ? MonsterType.boss
+                  : left
+                      ? MonsterType.normal
+                      : MonsterType.elite,
+              false));
+        }
+      } else {
+        openDialog(
+          context,
+          AddStandeeMenu(
+            elite: !left,
+            monster: data,
+          ),
+        );
+      }
+    }
+  }
+
   static Widget buildNormalLayout(Monster data, double scale, var shadow,
       var leftStyle, var rightStyle, bool frosthavenStyle) {
     MonsterStatsModel normal = data.type.levels[data.level.value].normal!;
     MonsterStatsModel? elite = data.type.levels[data.level.value].elite;
-    double height = 123 * 0.8 * scale;
 
     bool noCalculationSetting = true;
 
     //normal stats calculated:
     String health = normal.health.toString();
-    if(noCalculationSetting == false) {
+    if (noCalculationSetting == false) {
       int? healthValue = StatCalculator.calculateFormula(normal.health);
       if (healthValue != null) {
         health = healthValue.toString();
@@ -53,7 +100,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
     }
 
     String move = normal.move.toString();
-    if(noCalculationSetting == false) {
+    if (noCalculationSetting == false) {
       int? moveValue = StatCalculator.calculateFormula(normal.move);
       if (moveValue != null) {
         move = moveValue.toString();
@@ -61,7 +108,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
     }
 
     String attack = normal.attack.toString();
-    if(noCalculationSetting == false) {
+    if (noCalculationSetting == false) {
       int? attackValue = StatCalculator.calculateFormula(normal.attack);
       if (attackValue != null) {
         attack = attackValue.toString();
@@ -69,7 +116,6 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
     }
 
     return Stack(
-      //alignment: Alignment.center,
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0 * scale),
@@ -236,10 +282,11 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
       var leftStyle, var rightStyle, bool frosthavenStyle) {
     bool noCalculationSetting = true;
     double height = 123 * 0.8 * scale;
+
     MonsterStatsModel normal = data.type.levels[data.level.value].boss!;
     //normal stats calculated:
     String health = normal.health.toString();
-    if(noCalculationSetting == false) {
+    if (noCalculationSetting == false) {
       int? healthValue = StatCalculator.calculateFormula(normal.health);
       if (healthValue != null) {
         health = healthValue.toString();
@@ -270,7 +317,7 @@ class MonsterStatCardWidgetState extends State<MonsterStatCardWidget> {
 
     String attack = normal.attack.toString();
     String move = normal.move.toString();
-    if(noCalculationSetting == false) {
+    if (noCalculationSetting == false) {
       int? moveValue = StatCalculator.calculateFormula(normal.move);
       if (moveValue != null) {
         move = moveValue.toString();
