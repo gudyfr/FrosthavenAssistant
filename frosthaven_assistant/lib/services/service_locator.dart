@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
+import 'package:frosthaven_assistant/forteller/downloader.dart';
+import 'package:frosthaven_assistant/services/network/AutoConnect.dart';
 import 'package:frosthaven_assistant/services/network/client.dart';
 import 'package:frosthaven_assistant/services/network/connection.dart';
 import 'package:get_it/get_it.dart';
@@ -17,6 +19,8 @@ void setupGetIt() {
   getIt.registerLazySingleton<Network>(() => Network());
   getIt.registerLazySingleton<Connection>(() => Connection());
   getIt.registerLazySingleton<Client>(() => Client());
+  getIt.registerLazySingleton<Downloader>(() => Downloader());
+  getIt.registerLazySingleton<AutoConnect>(() => AutoConnect());
 }
 
 void setupMoreGetIt(BuildContext context) {

@@ -10,4 +10,8 @@ class FigureState {
   final conditionsAddedThisTurn = ValueNotifier<Set<Condition>>({});
   final conditionsAddedPreviousTurn = ValueNotifier<Set<Condition>>({});
   final chill = ValueNotifier<int>(0);
+  final baseShield = ValueNotifier<int>(0);
+  final baseRetaliate = ValueNotifier<int>(0);
+  final turnShield = ValueNotifier<int>(0);
+  final turnRetaliate = ValueNotifier<int>(0);
 }

@@ -1,3 +1,8 @@
+
+import 'dart:math';
+
+import 'package:frosthaven_assistant/Model/monster.dart';
+
 import '../../services/service_locator.dart';
 import '../enums.dart';
 import '../stat_calculator.dart';
@@ -44,14 +49,30 @@ class MonsterInstance extends FigureState {
   int roundSummoned = -1;
 
   void setLevel(Monster monster) {
-    dynamic newHealthValue =
-        10; //need to put something outer than 0 or the standee will die immediately causing glitch
-    if (type == MonsterType.boss) {
-      newHealthValue = monster.type.levels[monster.level.value].boss!.health;
-    } else if (type == MonsterType.elite) {
-      newHealthValue = monster.type.levels[monster.level.value].elite!.health;
-    } else if (type == MonsterType.normal) {
-      newHealthValue = monster.type.levels[monster.level.value].normal!.health;
+    var damage = maxHealth.value - health.value;
+    dynamic newHealthValue = 10; //need to put something outer than 0 or the standee will die immediately causing glitch
+    MonsterStatsModel? monsterStatsModel;
+    switch(type) {
+      case MonsterType.boss :
+        monsterStatsModel = monster.type.levels[monster.level.value].boss!;
+        break;
+      case MonsterType.elite :
+        monsterStatsModel = monster.type.levels[monster.level.value].elite!;
+        break;
+      case  MonsterType.normal :
+        monsterStatsModel = monster.type.levels[monster.level.value].normal!;
+        break;
+    }
+    if(monsterStatsModel != null) {
+      newHealthValue = monsterStatsModel.health;
+      for (var attribute in monsterStatsModel.attributes) {
+        if (attribute.startsWith("%shield% ")) {
+          baseShield.value = int.parse(attribute.substring("%shield% ".length));
+        } else if (attribute.startsWith("%retaliate% ")) {
+          baseRetaliate.value =
+              int.parse(attribute.substring("%retaliate% ".length));
+        }
+      }
     }
     int? value = StatCalculator.calculateFormula(newHealthValue);
     if (value != null) {
@@ -84,7 +105,7 @@ class MonsterInstance extends FigureState {
     }
     //maxHealth.value = StatCalculator.calculateFormula(newHealthValue)!;
     level.value = monster.level.value;
-    health.value = maxHealth.value;
+    health.value = max(1, maxHealth.value - damage);
   }
 
   @override
@@ -92,6 +113,8 @@ class MonsterInstance extends FigureState {
     return '{'
         '"health": ${health.value}, '
         '"maxHealth": ${maxHealth.value}, '
+        '"baseShield": ${baseShield.value}, '
+        '"baseRetaliate": ${baseRetaliate.value}, '
         '"level": ${level.value}, '
         '"standeeNr": $standeeNr, '
         '"move": $move, '
@@ -119,6 +142,9 @@ class MonsterInstance extends FigureState {
     move = json["move"];
     attack = json["attack"];
     range = json["range"];
+    baseShield.value = json["baseShield"] ?? 0;
+    baseRetaliate.value = json["baseRetaliate"] ?? 0;
+
     if (json.containsKey("roundSummoned")) {
       roundSummoned = json["roundSummoned"];
     } else {

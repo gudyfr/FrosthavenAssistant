@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:frosthaven_assistant/Model/MonsterAbility.dart';
+import 'package:frosthaven_assistant/Resource/card_stack.dart';
 
 import '../../Model/monster.dart';
 import '../../services/service_locator.dart';
@@ -59,11 +61,20 @@ class Monster extends ListItemData {
 
   @override
   String toString() {
+    var cardNumber = 0;
+    if (getIt<GameState>().roundState.value == RoundState.playTurns &&
+        (monsterInstances.value.isNotEmpty || isActive)) {
+      CardStack? stack = GameMethods.getDeck(type.deck)?.discardPile;
+      if (stack != null && stack.isNotEmpty) {
+        cardNumber = (stack.peek as MonsterAbilityCardModel).nr;
+      }
+    }
     return '{'
         '"id": "$id", '
         '"turnState": ${turnState.index}, '
         '"isActive": $isActive, '
         '"type": "${type.name}", '
+        '"currentCard": $cardNumber,'
         '"monsterInstances": ${monsterInstances.value.toString()}, '
         //'"state": ${state.index}, '
         '"isAlly": $isAlly, '

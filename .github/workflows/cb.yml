@@ -20,7 +20,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-          flutter-version: '3.7.12'
+          flutter-version: '3.10.5'
           cache: true
       - name: Install dependencies
         run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libunwind-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-good
@@ -53,10 +53,16 @@ jobs:
       - uses: actions/checkout@v2      
         with :
           ref: 'webserver'
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: release.keystore
+          encodedString: ${{ secrets.SECRET_KEYSTORE_B64 }}
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-          flutter-version: '3.7.12'
+          flutter-version: '3.10.5'
           cache: true
       - uses: actions/setup-java@v2
         with:
@@ -64,15 +70,18 @@ jobs:
           java-version: '11'
       - name: Install project dependencies
         run: flutter pub get
-      - name: Generate intermediates
+      - name: Generate Apk
         run: flutter build apk --release  
+      - name: Sign Android Apk
+        run: jarsigner -keystore ${{ steps.decode_keystore.outputs.filePath }} -storepass '${{ secrets.KEYSTORE_PASSWORD }}' -keypass '${{ secrets.KEYSTORE_PASSWORD }}' -sigalg SHA256withRSA -digestalg SHA-256 -signedjar build/app/outputs/apk/release/app-release-signed.apk build/app/outputs/apk/release/*.apk ${{ secrets.KEY_ALIAS }}
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: frosthaven-assistant-webserver-android.zip
-          directory: frosthaven_assistant/build/app/outputs/apk/release/
-          path: app-release.apk
+          directory:  frosthaven_assistant/build/app/outputs/apk/release/
+          path: app-release-signed.apk
+
       - name: Android Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
@@ -94,7 +103,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-          flutter-version: '3.7.12'
+          flutter-version: '3.10.5'
           cache: true
       - name: Install project dependencies
         run: flutter pub get
@@ -105,10 +114,7 @@ jobs:
       - name: Build artifacts
         run: flutter build windows --release
       - name: copy ffmpeg
-        uses: chpoit/js-copy-github-action@master
-        with:
-          source: "release material/ffmpeg.exe"
-          target: "frosthaven_assistant/build/windows/runner/Release/"
+        run: cp '../release material/ffmpeg.exe' 'build/windows/runner/Release/'
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
@@ -154,7 +160,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-          flutter-version: '3.7.12'
+          flutter-version: '3.10.5'
           cache: true
       - name: Install project dependencies
         run: flutter pub get
@@ -165,11 +171,9 @@ jobs:
       - name: Build artifacts
         run: flutter build macos --release
       - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: frosthaven-assistant-webserver-macos.zip
-          directory: frosthaven_assistant/build/macos/Build/Products/Release
+        run: |
+          cd build/macos/Build/Products/Release/
+          ditto -c -k --sequesterRsrc --keepParent X-Haven\ Assistant.app frosthaven-assistant-webserver-macos.zip
       - name: macOS Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

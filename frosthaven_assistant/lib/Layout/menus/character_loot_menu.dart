@@ -17,7 +17,7 @@ class CharacterLootMenuState extends State<CharacterLootMenu> {
     super.initState();
   }
 
-  int getLootAmount(String characterId, String lootName) {
+  static int getLootAmount(String characterId, String lootName) {
     int value = 0;
     for (var item in getIt<GameState>().lootDeck.discardPile.getList()) {
       if (item.owner == characterId && item.gfx.contains(lootName)) {

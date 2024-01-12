@@ -1,11 +1,14 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
+import 'package:path_provider/path_provider.dart';
 import '../services/network/communication.dart';
 import '../services/network/network.dart';
 import '../services/service_locator.dart';
 import 'state/game_state.dart';
+import 'package:path/path.dart' as p;
 
 abstract class Command {
   void execute();
@@ -16,6 +19,7 @@ abstract class Command {
 }
 
 class ActionHandler {
+  final AudioPlayer _audioPlayer = AudioPlayer();
   final commandIndex = ValueNotifier<int>(-1);
   final List<Command?> commands = [];
   final List<String> commandDescriptions = []; //only used when connected
@@ -97,6 +101,50 @@ class ActionHandler {
     } else if (isClient) {
       _communication.sendToAll("redo");
     }
+  }
+
+  Stream<PlayerState> getPlayerStateStream() {
+    return _audioPlayer.onPlayerStateChanged;
+  }
+
+  void playAudio(String folder, String file) {
+    bool isServer = getIt<Settings>().server.value;
+    bool isClient = getIt<Settings>().client.value == ClientState.connected;
+    if (isServer) {
+      getIt<Network>().server.send("Play:$folder:$file");
+    } else if (isClient) {
+      _communication.sendToAll("Play:$folder:$file");
+    }
+    playAudioFile(folder, file);
+  }
+
+  void pauseAudio() {
+    bool isServer = getIt<Settings>().server.value;
+    bool isClient = getIt<Settings>().client.value == ClientState.connected;
+    if (isServer) {
+      getIt<Network>().server.send("Pause");
+    } else if (isClient) {
+      _communication.sendToAll("Pause");
+    }
+    pauseAudioFile();
+  }
+
+  @override
+  void pauseAudioFile() {
+    if (_audioPlayer.state == PlayerState.playing) {
+      _audioPlayer.pause();
+    } else if (_audioPlayer.state == PlayerState.paused) {
+      _audioPlayer.resume();
+    }
+  }
+
+  void playAudioFile(String folder, String file) async {
+    var path = p.join((await getApplicationDocumentsDirectory()).path,
+        "frosthaven", "audio", "output", folder, file);
+    if(_audioPlayer.state == PlayerState.playing || _audioPlayer.state == PlayerState.paused) {
+      _audioPlayer.stop();
+    }
+    _audioPlayer.play(DeviceFileSource(path));
   }
 
   void action(Command command) {

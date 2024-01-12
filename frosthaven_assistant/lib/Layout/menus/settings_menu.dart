@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frosthaven_assistant/Resource/commands/track_standees_command.dart';
 import 'package:frosthaven_assistant/Resource/state/game_state.dart';
+import 'package:frosthaven_assistant/forteller/downloader.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import '../../Resource/scaling.dart';
 import '../../Resource/settings.dart';
@@ -31,18 +32,32 @@ class SettingsMenuState extends State<SettingsMenu> {
   final TextEditingController _serverTextController = TextEditingController();
   final TextEditingController _portTextController = TextEditingController();
 
+  final TextEditingController _webPortTextController = TextEditingController();
+  final TextEditingController _webFolderTextController = TextEditingController();
+  final TextEditingController _fortellerEmailTextController =
+      TextEditingController();
+  final TextEditingController _fortellerPasswordTextController =
+      TextEditingController();
+
   final ScrollController scrollController =
       ScrollController();
 
   @override
   Widget build(BuildContext context) {
     Settings settings = getIt<Settings>();
+    Downloader downloader = getIt<Downloader>();
 
     double screenWidth = MediaQuery.of(context).size.width;
     double referenceMinBarWidth = 40 * 6.5;
     double maxBarScale = screenWidth / referenceMinBarWidth;
     _serverTextController.text = settings.lastKnownConnection;
     _portTextController.text = settings.lastKnownPort;
+    _webPortTextController.text = settings.lastKnownWebPort;
+    _fortellerEmailTextController.text = settings.lastKnownFortellerEmail;
+    _fortellerPasswordTextController.text = settings.lastKnownFortellerPassword;
+    _webFolderTextController.text = settings.webFolder.value;
+    _webFolderTextController.addListener(() {settings.webFolder.value = _webFolderTextController.text;});
+
 
     return Card(
         child: Scrollbar(
@@ -233,6 +248,16 @@ class SettingsMenuState extends State<SettingsMenu> {
                                     onChanged: (bool? value) {
                                       setState(() {
                                         settings.setFullscreen(value!);
+                                        settings.saveToDisk();
+                                      });
+                                    }),
+                              if(Platform.isIOS || Platform.isWindows || Platform.isLinux)
+                                CheckboxListTile(
+                                    title: const Text("Always on Top"),
+                                    value: settings.alwaysOnTop.value,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        settings.setAlwaysOnTop(value!);
                                         settings.saveToDisk();
                                       });
                                     }),
@@ -442,11 +467,24 @@ class SettingsMenuState extends State<SettingsMenu> {
                                             getIt<Network>()
                                                 .server
                                                 .startServer();
+                                            if(settings.enableWebServer.value) {
+                                              // Also start the web server
+                                              settings.lastKnownWebPort = _webPortTextController.text;
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .startServer();
+                                            }
                                           } else {
                                             //close server
                                             getIt<Network>()
                                                 .server
                                                 .stopServer(null);
+                                            if(settings.enableWebServer.value) {
+                                              // Also stop the web server
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .stopServer(null);
+                                            }
                                           }
                                         });
                                   }),
@@ -487,7 +525,175 @@ class SettingsMenuState extends State<SettingsMenu> {
                                   ),
                                   maxLength: 6,
                                 ),
-                              )
+                              ),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: settings.enableWebServer,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text("Also Enable Web Server"),
+                                        value: settings.enableWebServer.value,
+                                        onChanged: (bool? value) {
+                                          settings.enableWebServer.value = ! settings.enableWebServer.value;
+                                          settings.lastKnownWebPort = _webPortTextController.text;
+                                          settings.saveToDisk();
+                                          if (settings.enableWebServer.value) {
+                                            // If the server is running, then we should start the web server
+                                            if (settings.server.value) {
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .startServer();
+                                            }
+                                          } else {
+                                            // If the server is running, then we should stop the web server
+                                            if (settings.server.value) {
+                                              getIt<Network>()
+                                                  .webServer
+                                                  .stopServer(null);
+                                            }
+                                          }
+                                        });
+                                  }),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 200,
+                                height: 40,
+                                child: TextField(
+                                  controller: _webPortTextController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "port",
+                                  ),
+                                  maxLength: 6,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 200,
+                                height: 40,
+                                child: TextField(
+                                  controller: _webFolderTextController,
+                                  keyboardType: TextInputType.none,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Dev Folder",
+                                  ),
+                                  maxLength: 100,
+                                ),
+                              ),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: settings.autoStartServers,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text("Start Both Servers upon launching X-Haven"),
+                                        value: settings.autoStartServers.value,
+                                        onChanged: (bool? value) {
+                                          settings.autoStartServers.value = ! settings.autoStartServers.value;
+                                          settings.lastKnownWebPort = _webPortTextController.text;
+                                          settings.saveToDisk();
+                                        });
+                                  }),
+                              ValueListenableBuilder<bool>(
+                                  valueListenable: settings.forteller,
+                                  builder: (context, value, child) {
+                                    return CheckboxListTile(
+                                        title: Text(settings.forteller.value
+                                            ? "Suspend Forteller download"
+                                            : "Start Forteller download"),
+                                        value: settings.forteller.value,
+                                        onChanged: (bool? value) {
+                                          if (!settings.forteller.value) {
+                                            settings.lastKnownFortellerPassword =
+                                                _fortellerPasswordTextController
+                                                    .text;
+                                            settings.lastKnownFortellerEmail =
+                                                _fortellerEmailTextController
+                                                    .text;
+                                            settings.saveToDisk();
+                                            getIt<Downloader>()
+                                                .startFetchingData();
+                                          } else {
+                                            //close server
+                                            getIt<Downloader>()
+                                                .stopFetchingData();
+                                          }
+                                        });
+                                  }),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 250,
+                                height: 40,
+                                child: TextField(
+                                  controller: _fortellerEmailTextController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Forteller email",
+                                  ),
+                                  maxLength: 100,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: 250,
+                                height: 40,
+                                child: TextField(
+                                  controller: _fortellerPasswordTextController,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  decoration: const InputDecoration(
+                                    counterText: "",
+                                    helperText: "Forteller password",
+                                  ),
+                                  maxLength: 30,
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                ),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: 250,
+                                  height: 20,
+                                  child: ValueListenableBuilder<String>(
+                                      valueListenable:
+                                          downloader.currentChapter,
+                                      builder: (context, value, child) {
+                                        return Text(
+                                            "Chapter ${downloader.currentChapter.value}");
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5),
+                                  width: 250,
+                                  height: 10,
+                                  child: ValueListenableBuilder<double>(
+                                      valueListenable:
+                                          downloader.chapterProgress,
+                                      builder: (context, value, child) {
+                                        return LinearProgressIndicator(
+                                          value:
+                                              downloader.chapterProgress.value,
+                                        );
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: 250,
+                                  height: 20,
+                                  child: ValueListenableBuilder<String>(
+                                      valueListenable: downloader.currentTrack,
+                                      builder: (context, value, child) {
+                                        return Text(value);
+                                      })),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5),
+                                  width: 250,
+                                  height: 10,
+                                  child: ValueListenableBuilder<double>(
+                                      valueListenable: downloader.trackProgress,
+                                      builder: (context, value, child) {
+                                        return LinearProgressIndicator(
+                                          value: downloader.trackProgress.value,
+                                        );
+                                      }))
                               //checkbox client + host + port
                               //checkbox server - show ip, port
                             ],

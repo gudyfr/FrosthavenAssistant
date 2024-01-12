@@ -129,6 +129,17 @@ class Client {
           _send("pong");
         } else if (message.startsWith("pong")) {
           _serverResponsive = true;
+        } else if (message.startsWith("Play:")) {
+          List<String> parts = message.split(":");
+          if (parts.length == 3) {
+            String folder = parts[1];
+            String file = parts[2];
+            print('Play from server : $folder / $file');
+            _gameState.playAudioFile(folder, file);
+          }
+        } else if (message.startsWith("Pause")) {
+          print('Pause from server');
+          _gameState.pauseAudioFile();
         }
       } else {
         _leftOverMessage = message;

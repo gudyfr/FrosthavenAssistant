@@ -253,9 +253,15 @@ Drawer createMainMenu(BuildContext context) {
                           //do the thing
                           if (!settings.server.value) {
                             getIt<Network>().server.startServer();
+                            if (getIt<Settings>().enableWebServer.value) {
+                              getIt<Network>().webServer.startServer();
+                            }
                           } else {
                             //close server?
                             getIt<Network>().server.stopServer(null);
+                            if (getIt<Settings>().enableWebServer.value) {
+                              getIt<Network>().webServer.stopServer(null);
+                            }
                           }
                         });
                     //});

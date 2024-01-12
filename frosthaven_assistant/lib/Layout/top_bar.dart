@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:frosthaven_assistant/Layout/play_button.dart';
 import 'package:frosthaven_assistant/Resource/settings.dart';
 
 import '../Resource/enums.dart';
@@ -61,6 +62,10 @@ PreferredSize createTopBar() {
                             repeat: ImageRepeat.repeatX));
                   }),
               actions: [
+                PlayButton(
+                  key : UniqueKey(),
+                  icon : 'assets/images/play.png'
+                ),
                 ElementButton(
                     key: UniqueKey(),
                     color: const Color.fromARGB(255, 226, 66, 30),

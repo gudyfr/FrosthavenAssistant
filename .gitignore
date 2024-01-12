@@ -44,6 +44,8 @@ captures/
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
+.idea/codeStyles/*
+.idea/.gitignore
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
@@ -52,6 +54,9 @@ captures/
 .idea/codeStyles/*
 .idea/.gitignore
 
+.vscode/settings.json
+
+#VS code
 .vscode/settings.json
 
 # Keystore files
@@ -87,3 +92,5 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+*.mp3
+.DS_Store
